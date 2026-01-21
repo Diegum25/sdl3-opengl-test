@@ -78,7 +78,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     context = SDL_GL_CreateContext(window);
 
     // Setup our function pointers
-    gladLoadGLLoader(SDL_GL_GetProcAddress);
+    gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress); // weird thing <- ****** ai wrote this
 
     // --- Shaders & program ---
 
