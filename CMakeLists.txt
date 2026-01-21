@@ -14,6 +14,10 @@ target_include_directories(glad PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/glad/include
 )
 
+#stb
+#target_include_directories(hello PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/stb/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/stb/include) #idk
+
 # Executable (always create it)
 add_executable(hello hello.c)
 
@@ -23,7 +27,7 @@ if (WIN32)
 endif()
 
 # Link libraries
-target_link_libraries(hello PRIVATE SDL3::SDL3 glad)
+target_link_libraries(hello PRIVATE SDL3::SDL3 glad m)
 
 # OpenGL
 if (WIN32)

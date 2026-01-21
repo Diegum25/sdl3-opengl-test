@@ -15,6 +15,10 @@
 #include <SDL3/SDL_main.h>
 #include <glad/glad.h>
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb/include/stb_image.h"
+
+
 /*
  * This example code $WHAT_IT_DOES.
  *
@@ -45,7 +49,7 @@ const char* fragShaderSource =
 /* This function runs once at startup. */
 
 unsigned int shaderProgram;
-unsigned int VBO, VAO, EBO;
+unsigned int VBO, VAO, EBO, texture;
 
 int width = 640;
 int height = 480;
@@ -108,16 +112,28 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     // --- Vertex data and buffers ---
 
     float verts[] = {
-    0.5f,  0.5f, 0.0f,  // top right
-    0.5f, -0.5f, 0.0f,  // bottom right
-    -0.5f, -0.5f, 0.0f,  // bottom left
-    -0.5f,  0.5f, 0.0f   // top left 
+    //Verts             //Texture
+    0.5f,  0.5f, 0.0f,  1.0f, 1.0f, // top right
+    0.5f, -0.5f, 0.0f,  1.0f, 0.0f, // bottom right
+    -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, // bottom left
+    -0.5f,  0.5f, 0.0f, 0.0f, 1.0f  // top left 
     };
 
     unsigned int indexes[] = {
     0, 1, 3,   // first triangle
     1, 2, 3    // second triangle
     };
+
+
+    // i believe this has nothing to do with the VAO
+    glGenTextures(1,&texture);
+
+    glBindTexture(GL_TEXTURE_2D,texture);
+
+    int imgWidth, imgHeight, imgChannels;
+    unsigned char* imgData = stbi_load("house.bmp",&imgWidth,&imgHeight,&imgChannels,0);
+    glTexImage2D(GL_TEXTURE_2D,0, GL_RGB, imgWidth, imgHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, imgData);
+    glGenerateMipmap(GL_TEXTURE_2D);
 
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1,&VBO);
@@ -135,8 +151,10 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 
     //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // end of sorts totally optional
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0); // position=0 from the shader
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1); // position=1 from the shader
 
     // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
     //glBindBuffer(GL_ARRAY_BUFFER, 0); // end of sorts totally optional
