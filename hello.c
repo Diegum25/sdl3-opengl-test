@@ -26,7 +26,8 @@
 /* We will use this renderer to draw into this window every frame. */
 static SDL_Window *window = NULL;
 
-const char *vertexShaderSource = "#version 330 core\n"
+const char *vertexShaderSource =
+    "#version 330 core\n"
     "layout (location = 0) in vec3 aPos;\n"
     "void main()\n"
     "{\n"
@@ -38,13 +39,13 @@ const char* fragShaderSource =
     "out vec4 FragColor\n;"
     "void main()\n"
     "{\n"
-    "    FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+    "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
     "}\0";
 
 /* This function runs once at startup. */
 
 unsigned int shaderProgram;
-unsigned int VBO, VAO;
+unsigned int VBO, VAO, EBO;
 
 int width = 640;
 int height = 480;
@@ -106,10 +107,21 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 
     // --- Vertex data and buffers ---
 
-    float verts[] = { -0.5f, -0.5f, 0.0f, 0.5f, -0.5f, 0.0f, 0.0f,  0.5f, 0.0f};
+    float verts[] = {
+    0.5f,  0.5f, 0.0f,  // top right
+    0.5f, -0.5f, 0.0f,  // bottom right
+    -0.5f, -0.5f, 0.0f,  // bottom left
+    -0.5f,  0.5f, 0.0f   // top left 
+    };
+
+    unsigned int indexes[] = {
+    0, 1, 3,   // first triangle
+    1, 2, 3    // second triangle
+    };
 
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1,&VBO);
+    glGenBuffers(1,&EBO);
     
     
     // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
@@ -118,19 +130,24 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     glBindBuffer(GL_ARRAY_BUFFER,VBO);
     glBufferData(GL_ARRAY_BUFFER,sizeof(verts),verts,GL_STATIC_DRAW);
 
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indexes),indexes,GL_STATIC_DRAW);
+
+    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // end of sorts totally optional
+
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0); // position=0 from the shader
 
     // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
-    glBindBuffer(GL_ARRAY_BUFFER, 0); // end of sorts
+    //glBindBuffer(GL_ARRAY_BUFFER, 0); // end of sorts totally optional
 
     // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
     // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
-    glBindVertexArray(0); // end of sorts
+    glBindVertexArray(0); // end of sorts this all goes into the VAO. i believe
 
 
     // uncomment this call to draw in wireframe polygons.
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     return SDL_APP_CONTINUE;  /* carry on with the program! */
 }
@@ -138,7 +155,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 /* This function runs when a new event (mouse input, keypresses, etc) occurs. */
 SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
 {
-    if (event->type == SDL_EVENT_QUIT) {
+    if (event->type == SDL_EVENT_QUIT || event->type == SDL_EVENT_KEY_DOWN){
         return SDL_APP_SUCCESS;  /* end the program, reporting success to the OS. */
     }
     if (event->type == SDL_EVENT_WINDOW_RESIZED){
@@ -163,7 +180,8 @@ SDL_AppResult SDL_AppIterate(void *appstate)
 
     glUseProgram(shaderProgram);
     glBindVertexArray(VAO);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
 
     SDL_GL_SwapWindow(window);
     return SDL_APP_CONTINUE;  /* carry on with the program! */
