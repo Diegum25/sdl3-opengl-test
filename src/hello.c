@@ -31,14 +31,6 @@
 /* We will use this renderer to draw into this window every frame. */
 static SDL_Window *window = NULL;
 
-const char *vertexShaderSource =
-    "#version 330 core\n"
-    "layout (location = 0) in vec3 aPos;\n"
-    "void main()\n"
-    "{\n"
-    "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-    "}\0";
-
 const char* fragShaderSource = 
     "#version 330 core\n"
     "out vec4 FragColor\n;"
@@ -90,10 +82,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 
     // Vertex Shader
     unsigned int vShader;
-    vShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vShader, 1, &vertexShaderSource, NULL);
-    glCompileShader(vShader);
-    checkShader(vShader);
+    vShader = createFullShader(GL_VERTEX_SHADER,"test.glsl");
 
     // Fragment Shader
     unsigned int fShader;
