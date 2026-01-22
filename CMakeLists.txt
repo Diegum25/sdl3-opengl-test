@@ -14,12 +14,11 @@ target_include_directories(glad PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/glad/include
 )
 
-#stb
-#target_include_directories(hello PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/stb/include)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/stb/include) #idk
+# stb
+include_directories(hello PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/stb/include ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # Executable (always create it)
-add_executable(hello hello.c)
+add_executable(hello src/hello.c src/util.c)
 
 # Windows subsystem flag (optional)
 if (WIN32)

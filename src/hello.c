@@ -14,9 +14,10 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 #include <glad/glad.h>
+#include "util.h"
 
 #define STB_IMAGE_IMPLEMENTATION
-#include "stb/include/stb_image.h"
+#include "stb_image.h"
 
 
 /*
@@ -92,12 +93,14 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     vShader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vShader, 1, &vertexShaderSource, NULL);
     glCompileShader(vShader);
+    checkShader(vShader);
 
     // Fragment Shader
     unsigned int fShader;
     fShader = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fShader, 1, &fragShaderSource, NULL);
     glCompileShader(fShader);
+    checkShader(fShader);
 
     // Program
     shaderProgram = glCreateProgram();
