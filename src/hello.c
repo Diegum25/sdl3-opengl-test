@@ -31,14 +31,6 @@
 /* We will use this renderer to draw into this window every frame. */
 static SDL_Window *window = NULL;
 
-const char* fragShaderSource = 
-    "#version 330 core\n"
-    "out vec4 FragColor\n;"
-    "void main()\n"
-    "{\n"
-    "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-    "}\0";
-
 /* This function runs once at startup. */
 
 unsigned int shaderProgram;
@@ -49,6 +41,8 @@ int height = 480;
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 {
+    stbi_set_flip_vertically_on_load_thread(true);
+
     SDL_SetAppMetadata("Example HUMAN READABLE NAME", "1.0", "com.example.CATEGORY-NAME");
 
     if (!SDL_Init(SDL_INIT_VIDEO)) {
@@ -76,20 +70,17 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     context = SDL_GL_CreateContext(window);
 
     // Setup our function pointers
-    gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress); // weird thing <- ****** ai wrote this
+    gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress); // weird thing <- ****** ai wrote this shit
 
     // --- Shaders & program ---
 
     // Vertex Shader
     unsigned int vShader;
-    vShader = createFullShader(GL_VERTEX_SHADER,"test.glsl");
+    vShader = createFullShader(GL_VERTEX_SHADER,"vertexShader.glsl");
 
     // Fragment Shader
     unsigned int fShader;
-    fShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fShader, 1, &fragShaderSource, NULL);
-    glCompileShader(fShader);
-    checkShader(fShader);
+    fShader = createFullShader(GL_FRAGMENT_SHADER,"fragmentShader.glsl");
 
     // Program
     shaderProgram = glCreateProgram();
@@ -117,10 +108,19 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     };
 
 
-    // i believe this has nothing to do with the VAO
+    // this has nothing to do with the VAO and can be used anywhere
+    // also need to put all this shit on a funcion
     glGenTextures(1,&texture);
 
     glBindTexture(GL_TEXTURE_2D,texture);
+
+    // ?
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
 
     int imgWidth, imgHeight, imgChannels;
     unsigned char* imgData = stbi_load("house.bmp",&imgWidth,&imgHeight,&imgChannels,0);
@@ -188,6 +188,7 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     glClearColor(0.0f,0.0f,0.0f,1.0f);
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
+    glBindTexture(GL_TEXTURE_2D,texture);
     glUseProgram(shaderProgram);
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

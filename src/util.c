@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include "util.h"
 
+#define RMI_DEBUG
+
 GLuint createFullShader(GLenum type, char* fileName){
     GLuint shaderID;
     int fileSize;
@@ -13,6 +15,15 @@ GLuint createFullShader(GLenum type, char* fileName){
     // bro
     
     FILE* stream = fopen(fileName,"rb");
+
+    #ifdef RMI_DEBUG
+        if (stream == NULL){
+            SDL_Log("Couldnt read file: %s",fileName);
+            glDeleteShader(shaderID);
+            return 0;
+        }
+    #endif
+
     fseek(stream, 0L, SEEK_END);
     fileSize = ftell(stream);
     fseek(stream, 0L, SEEK_SET);
@@ -26,10 +37,26 @@ GLuint createFullShader(GLenum type, char* fileName){
     glShaderSource(shaderID, 1, &contents, NULL);
     glCompileShader(shaderID);
 
+    #ifdef RMI_DEBUG
+        int  success;
+        char infoLog[512];
+        glGetShaderiv(shaderID, GL_COMPILE_STATUS, &success);
+
+        if(!success)
+        {
+            glGetShaderInfoLog(shaderID, 512, NULL, infoLog);
+            SDL_Log("ERROR::SHADER::VERTEX::COMPILATION_FAILED\n %s",infoLog);
+            glDeleteShader(shaderID);
+            return 0;
+        }
+    #endif
+
     SDL_free(contents);
     
     if (checkShader(shaderID)) return shaderID;
     
+    // if fail
+    glDeleteShader(shaderID);
     return 0;
 } 
 
