@@ -1,12 +1,25 @@
 #include <SDL3/SDL.h>
 #include <glad/glad.h>
 #include <stdio.h>
+
 #include "util.h"
 
 #define RMI_DEBUG
 
-GLuint createFullShader(GLenum type, char* fileName){
-    GLuint shaderID;
+bool checkShader(unsigned int shader){
+    int success;
+    char infolog[512];
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+
+    if (success) return true;
+
+    glGetShaderInfoLog(shader, 512, NULL, infolog);
+    SDL_Log("Shader is NOT ok %s", infolog);
+    return false;
+}
+
+unsigned int createFullShader(GLenum type, const char* fileName){
+    unsigned int shaderID;
     int fileSize;
     char* contents;
     shaderID = glCreateShader(type);
@@ -30,11 +43,13 @@ GLuint createFullShader(GLenum type, char* fileName){
 
     contents = SDL_malloc(fileSize + 1);
 
-    size_t size = fread(contents,1,fileSize,stream); // ?
+    size_t size = fread(contents,1,fileSize,stream);
     contents[size]=0; // Add terminating zero.
 
+    const char* source = contents;
+
     fclose(stream);
-    glShaderSource(shaderID, 1, &contents, NULL);
+    glShaderSource(shaderID, 1, &source, NULL);
     glCompileShader(shaderID);
 
     #ifdef RMI_DEBUG
@@ -52,22 +67,10 @@ GLuint createFullShader(GLenum type, char* fileName){
     #endif
 
     SDL_free(contents);
-    
+
     if (checkShader(shaderID)) return shaderID;
-    
+
     // if fail
     glDeleteShader(shaderID);
     return 0;
-} 
-
-bool checkShader(unsigned int shader){
-    int success;
-    char infolog[512];
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-
-    if (success) return true;
-
-    glGetShaderInfoLog(shader, 512, NULL, infolog);
-    SDL_Log("Shader is NOT ok %s", infolog);
-    return false;
 }
