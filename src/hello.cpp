@@ -14,7 +14,7 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 #include <glad/glad.h>
-#include "util.h"
+#include "util.hpp"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"

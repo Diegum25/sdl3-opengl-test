@@ -2,7 +2,7 @@
 #include <glad/glad.h>
 #include <stdio.h>
 
-#include "util.h"
+#include "util.hpp"
 
 #define RMI_DEBUG
 
@@ -20,7 +20,7 @@ bool checkShader(unsigned int shader){
 
 unsigned int createFullShader(GLenum type, const char* fileName){
     unsigned int shaderID;
-    int fileSize;
+    size_t fileSize;
     char* contents;
     shaderID = glCreateShader(type);
 
@@ -41,7 +41,7 @@ unsigned int createFullShader(GLenum type, const char* fileName){
     fileSize = ftell(stream);
     fseek(stream, 0L, SEEK_SET);
 
-    contents = SDL_malloc(fileSize + 1);
+    contents = (char*)SDL_malloc(fileSize + 1);
 
     size_t size = fread(contents,1,fileSize,stream);
     contents[size]=0; // Add terminating zero.
