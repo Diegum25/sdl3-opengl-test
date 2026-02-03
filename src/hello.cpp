@@ -19,6 +19,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+#include "cglm/cglm.h"
 
 /*
  * This example code $WHAT_IT_DOES.
@@ -33,11 +34,18 @@ static SDL_Window *window = NULL;
 
 /* This function runs once at startup. */
 
-unsigned int shaderProgram;
+unsigned int shaderProgram, uniformLoc;
 unsigned int VBO, VAO, EBO, texture;
 
 int width = 640;
 int height = 480;
+
+mat4 transform = {
+    {1.0f,0.0f,0.0f,0.0f},
+    {0.0f,1.0f,0.0f,0.0f},
+    {0.0f,0.0f,1.0f,0.0f},
+    {0.0f,0.0f,0.0f,1.0f}
+};
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 {
@@ -88,6 +96,8 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     glAttachShader(shaderProgram,vShader);
     glAttachShader(shaderProgram,fShader);
     glLinkProgram(shaderProgram);
+
+    uniformLoc = glGetUniformLocation(shaderProgram,"transform");
 
     glDeleteShader(vShader);
     glDeleteShader(fShader);  
@@ -189,6 +199,9 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
     glBindTexture(GL_TEXTURE_2D,texture);
+    static vec3 axis = {1.0f,1.0f,1.0f};
+    glm_rotate(transform,0.1f,axis);
+    glUniformMatrix4fv(uniformLoc,1,GL_FALSE,(const float*)transform); // gulp. we are casting every single frame. <- bad
     glUseProgram(shaderProgram);
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
