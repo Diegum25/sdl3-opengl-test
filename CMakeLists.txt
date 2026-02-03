@@ -8,6 +8,9 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 # SDL3
 add_subdirectory(SDL EXCLUDE_FROM_ALL) # to build statically add {-DSDL_SHARED=False -DSDL_STATIC=True} to {cmake -S . -B build}
 
+#cglm
+add_subdirectory(cglm EXCLUDE_FROM_ALL)
+
 # glad
 add_library(glad STATIC glad/src/glad.c)
 target_include_directories(glad PUBLIC
@@ -26,7 +29,7 @@ if (WIN32)
 endif()
 
 # Link libraries
-target_link_libraries(hello PRIVATE SDL3::SDL3 glad m)
+target_link_libraries(hello PRIVATE SDL3::SDL3 glad m cglm)
 
 # OpenGL
 if (WIN32)
