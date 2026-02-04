@@ -1,16 +1,11 @@
-## Get submodules (SDL3)
+# sdl3-opengl-test
 
-```sh
-git submodule update --init --recursive
-```
-## Configure build folder (static SDL3 & cglm) and build
-```sh
-cmake -S . -B build -DSDL_SHARED=False -DSDL_STATIC=True
-cmake --build build
-```
-## Run
+Building instructions at [BUILDING.md](BUILDING.md).
 
-```sh
-./build/hello
-```
+## Licenses
 
+[**SDL**](https://github.com/libsdl-org/SDL) - Zlib license
+
+[**cglm**](https://github.com/recp/cglm/) - [MIT license](cglm/LICENSE)
+
+**[stb](https://github.com/nothings/stb/)** - Public Domain

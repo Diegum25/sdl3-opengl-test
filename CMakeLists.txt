@@ -11,7 +11,7 @@ option(CGLM_STATIC "Static build" ON)
 # SDL3
 add_subdirectory(SDL EXCLUDE_FROM_ALL) # to build statically add {-DSDL_SHARED=False -DSDL_STATIC=True} to {cmake -S . -B build}
 
-#cglm
+# cglm
 add_subdirectory(cglm EXCLUDE_FROM_ALL)
 
 # glad

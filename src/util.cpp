@@ -1,7 +1,3 @@
-#include <SDL3/SDL.h>
-#include <glad/glad.h>
-#include <stdio.h>
-
 #include "util.hpp"
 
 #define RMI_DEBUG
