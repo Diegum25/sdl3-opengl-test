@@ -1,7 +1,7 @@
-## Get submodules (SDL3)
+## Get submodules (SDL3 & cglm)
 
 ```sh
-git submodule update --init --recursive
+git submodule update --init --recursive --depth 1
 ```
 ## Configure build folder (static SDL3 & cglm) and build
 ```sh
