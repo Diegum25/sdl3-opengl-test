@@ -21,6 +21,8 @@
 
 #include "cglm/cglm.h"
 
+#include "sceneMatrix.hpp"
+
 /*
  * This example code $WHAT_IT_DOES.
  *
@@ -34,7 +36,7 @@ static SDL_Window *window = NULL;
 
 /* This function runs once at startup. */
 
-unsigned int shaderProgram, uniformLoc;
+unsigned int shaderProgram, uniformLocs[4];
 unsigned int VBO, VAO, EBO, texture;
 
 int width = 640;
@@ -46,6 +48,8 @@ mat4 transform = {
     {0.0f,0.0f,1.0f,0.0f},
     {0.0f,0.0f,0.0f,1.0f}
 };
+
+sceneMatrix matrix(width,height);
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 {
@@ -97,7 +101,10 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     glAttachShader(shaderProgram,fShader);
     glLinkProgram(shaderProgram);
 
-    uniformLoc = glGetUniformLocation(shaderProgram,"transform");
+    uniformLocs[0] = glGetUniformLocation(shaderProgram,"transform");
+    uniformLocs[1] = glGetUniformLocation(shaderProgram,"model");
+    uniformLocs[2] = glGetUniformLocation(shaderProgram,"view");
+    uniformLocs[3] = glGetUniformLocation(shaderProgram,"projection");
 
     glDeleteShader(vShader);
     glDeleteShader(fShader);  
@@ -154,9 +161,9 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // end of sorts totally optional
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0); // position=0 from the shader
+    glEnableVertexAttribArray(0); // location=0 from the shader
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1); // position=1 from the shader
+    glEnableVertexAttribArray(1); // location=1 from the shader
 
     // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
     //glBindBuffer(GL_ARRAY_BUFFER, 0); // end of sorts totally optional
@@ -168,6 +175,10 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 
     // uncomment this call to draw in wireframe polygons.
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+    /* glEnable(GL_CULL_FACE);
+
+    glCullFace(GL_FRONT); */
 
     return SDL_APP_CONTINUE;  /* carry on with the program! */
 }
@@ -199,9 +210,16 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
     glBindTexture(GL_TEXTURE_2D,texture);
-    static vec3 axis = {1.0f,1.0f,1.0f};
-    glm_rotate(transform,0.1f,axis);
-    glUniformMatrix4fv(uniformLoc,1,GL_FALSE,(const float*)transform); // gulp. we are casting every single frame. <- bad
+/*     static vec3 axis = {1.0f,1.0f,1.0f};
+    static vec3 axis2 = {1.0f,0.0f,0.0f};
+    glm_rotate(transform,0.1f,axis); */
+
+    /* glm_rotate(matrix.view,0.01,axis2); */
+
+    glUniformMatrix4fv(uniformLocs[0],1,GL_FALSE,(const float*)transform); // gulp. we are casting every single frame. <- bad
+    glUniformMatrix4fv(uniformLocs[1],1,GL_FALSE,(const float*)matrix.model); // gulp. we are casting every single frame. <- bad
+    glUniformMatrix4fv(uniformLocs[2],1,GL_FALSE,(const float*)matrix.view); // gulp. we are casting every single frame. <- bad
+    glUniformMatrix4fv(uniformLocs[3],1,GL_FALSE,(const float*)matrix.projection); // gulp. we are casting every single frame. <- bad
     glUseProgram(shaderProgram);
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
