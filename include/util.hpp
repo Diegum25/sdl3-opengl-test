@@ -3,6 +3,7 @@
 #include <SDL3/SDL.h>
 #include <glad/glad.h>
 #include <stdio.h>
+#include <cglm/cglm.h>
 
 bool checkShader(unsigned int shader);
 

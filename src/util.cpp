@@ -4,10 +4,11 @@
 
 bool checkShader(unsigned int shader){
     int success;
-    char infolog[512];
     glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 
     if (success) return true;
+
+    char infolog[512];
 
     glGetShaderInfoLog(shader, 512, NULL, infolog);
     SDL_Log("Shader is NOT ok %s", infolog);
@@ -68,5 +69,6 @@ unsigned int createFullShader(GLenum type, const char* fileName){
 
     // if fail
     glDeleteShader(shaderID);
+
     return 0;
 }
