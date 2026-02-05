@@ -196,8 +196,14 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
         if (success){
             width = x;
             height = y;
+            glm_perspective(glm_rad(45.0f),float(x) / float(y), 0.1f,100.0f, matrix.projection);
             //SDL_Log("New size:\nx=%d\ny=%d",width,height);
         }
+    }
+    if (event->type == SDL_EVENT_MOUSE_MOTION){
+        float change = event->motion.xrel;
+        vec3 axis = {0.0f,1.0f,0.0f};
+        glm_rotate(matrix.view,glm_rad(change),axis);
     }
     return SDL_APP_CONTINUE;  /* carry on with the program! */
 }
