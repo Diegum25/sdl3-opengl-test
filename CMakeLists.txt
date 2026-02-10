@@ -24,7 +24,7 @@ target_include_directories(glad PUBLIC
 include_directories(hello PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/stb/include ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # Executable
-add_executable(hello src/hello.cpp src/util.cpp src/sceneMatrix.cpp)
+add_executable(hello src/hello.c src/util.c src/sceneMatrix.c)
 
 # Windows subsystem flag
 if (WIN32)

@@ -14,14 +14,14 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 #include <glad/glad.h>
-#include "util.hpp"
+#include "util.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
 #include "cglm/cglm.h"
 
-#include "sceneMatrix.hpp"
+#include "sceneMatrix.h"
 
 /*
  * This example code $WHAT_IT_DOES.
@@ -49,10 +49,28 @@ mat4 transform = {
     {0.0f,0.0f,0.0f,1.0f}
 };
 
-sceneMatrix matrix(width,height);
+struct sceneMatrix matrix = {{
+    {1.0f,0.0f,0.0f,0.0f},
+    {0.0f,1.0f,0.0f,0.0f},
+    {0.0f,0.0f,1.0f,0.0f},
+    {0.0f,0.0f,0.0f,1.0f}
+},{
+    {1.0f,0.0f,0.0f,0.0f},
+    {0.0f,1.0f,0.0f,0.0f},
+    {0.0f,0.0f,1.0f,0.0f},
+    {0.0f,0.0f,0.0f,1.0f}
+},{
+    {1.0f,0.0f,0.0f,0.0f},
+    {0.0f,1.0f,0.0f,0.0f},
+    {0.0f,0.0f,1.0f,0.0f},
+    {0.0f,0.0f,0.0f,1.0f}
+}};
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 {
+
+    initSceneMatrix(&matrix,width,height);
+
     stbi_set_flip_vertically_on_load_thread(true);
 
     SDL_SetAppMetadata("Example HUMAN READABLE NAME", "1.0", "com.example.CATEGORY-NAME");
@@ -196,7 +214,7 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
         if (success){
             width = x;
             height = y;
-            glm_perspective(glm_rad(45.0f),float(x) / float(y), 0.1f,100.0f, matrix.projection);
+            glm_perspective(glm_rad(45.0f),(float)x / (float)y, 0.1f,100.0f, matrix.projection);
             //SDL_Log("New size:\nx=%d\ny=%d",width,height);
         }
     }
