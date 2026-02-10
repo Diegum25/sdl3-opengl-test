@@ -222,6 +222,7 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     glActiveTexture(GL_TEXTURE0); // SEND TO HOUSE
     glBindTexture(GL_TEXTURE_2D,texture);
 
+    // I also dont know why these arent presisting
     glUniformMatrix4fv(uniformLocs[0],1,GL_FALSE,(const float*)transform); // gulp. we are casting every single frame. <- bad
     glUniformMatrix4fv(uniformLocs[1],1,GL_FALSE,(const float*)matrix.model); // gulp. we are casting every single frame. <- bad
     glUniformMatrix4fv(uniformLocs[2],1,GL_FALSE,(const float*)matrix.view); // gulp. we are casting every single frame. <- bad
