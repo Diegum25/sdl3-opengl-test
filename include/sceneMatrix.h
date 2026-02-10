@@ -1,9 +1,9 @@
 #include <cglm/cglm.h>
 
-struct sceneMatrix{
+typedef struct {
     mat4 model;
     mat4 view;
     mat4 projection;
-};
+} sceneMatrix;
 
-void initSceneMatrix(struct sceneMatrix*, float w, float h);
+void initSceneMatrix(sceneMatrix*, float w, float h);

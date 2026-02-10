@@ -49,22 +49,7 @@ mat4 transform = {
     {0.0f,0.0f,0.0f,1.0f}
 };
 
-struct sceneMatrix matrix = {{
-    {1.0f,0.0f,0.0f,0.0f},
-    {0.0f,1.0f,0.0f,0.0f},
-    {0.0f,0.0f,1.0f,0.0f},
-    {0.0f,0.0f,0.0f,1.0f}
-},{
-    {1.0f,0.0f,0.0f,0.0f},
-    {0.0f,1.0f,0.0f,0.0f},
-    {0.0f,0.0f,1.0f,0.0f},
-    {0.0f,0.0f,0.0f,1.0f}
-},{
-    {1.0f,0.0f,0.0f,0.0f},
-    {0.0f,1.0f,0.0f,0.0f},
-    {0.0f,0.0f,1.0f,0.0f},
-    {0.0f,0.0f,0.0f,1.0f}
-}};
+sceneMatrix matrix;
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 {

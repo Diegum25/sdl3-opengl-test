@@ -1,8 +1,27 @@
 #include "sceneMatrix.h"
 #include <cglm/cglm.h>
 
-void initSceneMatrix(struct sceneMatrix * matrix, float sceneWidth, float sceneHeight)
+void initSceneMatrix(sceneMatrix * matrix, float sceneWidth, float sceneHeight)
 {
+    sceneMatrix newMatrix = {{
+        {1.0f,0.0f,0.0f,0.0f},
+        {0.0f,1.0f,0.0f,0.0f},
+        {0.0f,0.0f,1.0f,0.0f},
+        {0.0f,0.0f,0.0f,1.0f}
+    },{
+        {1.0f,0.0f,0.0f,0.0f},
+        {0.0f,1.0f,0.0f,0.0f},
+        {0.0f,0.0f,1.0f,0.0f},
+        {0.0f,0.0f,0.0f,1.0f}
+    },{
+        {1.0f,0.0f,0.0f,0.0f},
+        {0.0f,1.0f,0.0f,0.0f},
+        {0.0f,0.0f,1.0f,0.0f},
+        {0.0f,0.0f,0.0f,1.0f}
+    }};
+
+    *matrix = newMatrix;
+
     // model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
     vec3 axis = {1.0f, 0.0f, 0.0f};
     glm_rotate(matrix->model,glm_rad(-55.0f),axis);
