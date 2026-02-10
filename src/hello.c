@@ -53,7 +53,6 @@ sceneMatrix matrix;
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 {
-
     initSceneMatrix(&matrix,width,height);
 
     stbi_set_flip_vertically_on_load_thread(true);
@@ -103,6 +102,8 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     glAttachShader(shaderProgram,vShader);
     glAttachShader(shaderProgram,fShader);
     glLinkProgram(shaderProgram);
+
+    glUniform1i(glGetUniformLocation(shaderProgram,"house"),0); // set house UNIFORM to GL_TEXTURE0
 
     uniformLocs[0] = glGetUniformLocation(shaderProgram,"transform");
     uniformLocs[1] = glGetUniformLocation(shaderProgram,"model");
@@ -218,12 +219,8 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     glClearColor(0.0f,0.0f,0.0f,1.0f);
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
+    glActiveTexture(GL_TEXTURE0); // SEND TO HOUSE
     glBindTexture(GL_TEXTURE_2D,texture);
-/*     static vec3 axis = {1.0f,1.0f,1.0f};
-    static vec3 axis2 = {1.0f,0.0f,0.0f};
-    glm_rotate(transform,0.1f,axis); */
-
-    /* glm_rotate(matrix.view,0.01,axis2); */
 
     glUniformMatrix4fv(uniformLocs[0],1,GL_FALSE,(const float*)transform); // gulp. we are casting every single frame. <- bad
     glUniformMatrix4fv(uniformLocs[1],1,GL_FALSE,(const float*)matrix.model); // gulp. we are casting every single frame. <- bad
