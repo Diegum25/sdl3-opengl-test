@@ -22,6 +22,7 @@
 #include "cglm/cglm.h"
 
 #include "sceneMatrix.h"
+#include "shader.h"
 
 /*
  * This example code $WHAT_IT_DOES.
@@ -36,7 +37,9 @@ static SDL_Window *window = NULL;
 
 /* This function runs once at startup. */
 
-unsigned int shaderProgram, uniformLocs[4];
+
+shader regularShader;
+
 unsigned int VBO, VAO, EBO, texture;
 
 int width = 640;
@@ -88,30 +91,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 
     // --- Shaders & program ---
 
-    // Vertex Shader
-    unsigned int vShader;
-    vShader = createFullShader(GL_VERTEX_SHADER,"vertexShader.glsl");
-
-    // Fragment Shader
-    unsigned int fShader;
-    fShader = createFullShader(GL_FRAGMENT_SHADER,"fragmentShader.glsl");
-
-    // Program
-    shaderProgram = glCreateProgram();
-
-    glAttachShader(shaderProgram,vShader);
-    glAttachShader(shaderProgram,fShader);
-    glLinkProgram(shaderProgram);
-
-    glUniform1i(glGetUniformLocation(shaderProgram,"house"),0); // set house UNIFORM to GL_TEXTURE0
-
-    uniformLocs[0] = glGetUniformLocation(shaderProgram,"transform");
-    uniformLocs[1] = glGetUniformLocation(shaderProgram,"model");
-    uniformLocs[2] = glGetUniformLocation(shaderProgram,"view");
-    uniformLocs[3] = glGetUniformLocation(shaderProgram,"projection");
-
-    glDeleteShader(vShader);
-    glDeleteShader(fShader);  
+    initShader(&regularShader);
 
     // --- Vertex data and buffers ---
 
@@ -190,7 +170,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 /* This function runs when a new event (mouse input, keypresses, etc) occurs. */
 SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
 {
-    if (event->type == SDL_EVENT_QUIT || event->type == SDL_EVENT_KEY_DOWN){
+    if (event->type == SDL_EVENT_QUIT /* || event->type == SDL_EVENT_KEY_DOWN */){
         return SDL_APP_SUCCESS;  /* end the program, reporting success to the OS. */
     }
     if (event->type == SDL_EVENT_WINDOW_RESIZED){
@@ -219,15 +199,16 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     glClearColor(0.0f,0.0f,0.0f,1.0f);
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-    glActiveTexture(GL_TEXTURE0); // SEND TO HOUSE
+    glActiveTexture(GL_TEXTURE0); // SET HOUSE'S UNIT
     glBindTexture(GL_TEXTURE_2D,texture);
 
     // I also dont know why these arent presisting
-    glUniformMatrix4fv(uniformLocs[0],1,GL_FALSE,(const float*)transform); // gulp. we are casting every single frame. <- bad
-    glUniformMatrix4fv(uniformLocs[1],1,GL_FALSE,(const float*)matrix.model); // gulp. we are casting every single frame. <- bad
-    glUniformMatrix4fv(uniformLocs[2],1,GL_FALSE,(const float*)matrix.view); // gulp. we are casting every single frame. <- bad
-    glUniformMatrix4fv(uniformLocs[3],1,GL_FALSE,(const float*)matrix.projection); // gulp. we are casting every single frame. <- bad
-    glUseProgram(shaderProgram);
+    sendMat4f(&regularShader,"transform",transform);
+    sendMat4f(&regularShader,"model",matrix.model);
+    sendMat4f(&regularShader,"view",matrix.view);
+    sendMat4f(&regularShader,"projection",matrix.projection);
+    
+    glUseProgram(regularShader.program);
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
