@@ -2,20 +2,21 @@
 
 #define RMI_DEBUG
 
-bool checkShader(unsigned int shader){
+bool RMIUtilCheckShader(unsigned int shader){
     int success;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 
     if (success) return true;
+    #ifdef RMI_DEBUG
+        char infolog[512];
 
-    char infolog[512];
-
-    glGetShaderInfoLog(shader, 512, NULL, infolog);
-    SDL_Log("Shader is NOT ok %s", infolog);
+        glGetShaderInfoLog(shader, 512, NULL, infolog);
+        SDL_Log("Shader is NOT ok %s", infolog);
+    #endif
     return false;
 }
 
-unsigned int createFullShader(GLenum type, const char* fileName){
+unsigned int RMIUtilCreateFullShader(GLenum type, const char* fileName){
     unsigned int shaderID;
     size_t fileSize;
     char* contents;
@@ -49,23 +50,9 @@ unsigned int createFullShader(GLenum type, const char* fileName){
     glShaderSource(shaderID, 1, &source, NULL);
     glCompileShader(shaderID);
 
-    #ifdef RMI_DEBUG
-        int  success;
-        char infoLog[512];
-        glGetShaderiv(shaderID, GL_COMPILE_STATUS, &success);
-
-        if(!success)
-        {
-            glGetShaderInfoLog(shaderID, 512, NULL, infoLog);
-            SDL_Log("ERROR::SHADER::VERTEX::COMPILATION_FAILED\n %s",infoLog);
-            glDeleteShader(shaderID);
-            return 0;
-        }
-    #endif
-
     SDL_free(contents);
 
-    if (checkShader(shaderID)) return shaderID;
+    if (RMIUtilCheckShader(shaderID)) return shaderID;
 
     // if fail
     glDeleteShader(shaderID);

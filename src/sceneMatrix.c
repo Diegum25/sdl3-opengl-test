@@ -1,9 +1,9 @@
 #include "sceneMatrix.h"
 #include <cglm/cglm.h>
 
-void initSceneMatrix(sceneMatrix * matrix, float sceneWidth, float sceneHeight)
+void RMIInitSceneMatrix(RMI_SceneMatrix * matrix, float sceneWidth, float sceneHeight)
 {
-    sceneMatrix newMatrix = {{
+    RMI_SceneMatrix newMatrix = {{
         {1.0f,0.0f,0.0f,0.0f},
         {0.0f,1.0f,0.0f,0.0f},
         {0.0f,0.0f,1.0f,0.0f},

@@ -10,10 +10,10 @@
 
 typedef struct{ // MAKE SURE TO ONLY INIT AFTER GLAD GETS SET UP!
     unsigned int program;
-} shader;
+} RMI_Shader;
 
-void initShader(shader* shader);
+void RMIInitShader(RMI_Shader* shader);
 
-void sendInt(shader* shader, const char * uniform, int i);
-void sendFloat(shader* shader, const char * uniform, float f);
-void sendMat4f(shader* shader, const char * uniform, mat4 m4);
+void RMIUniformInt(RMI_Shader* shader, const char * uniform, int i);
+void RMIUnifromFloat(RMI_Shader* shader, const char * uniform, float f);
+void RMIUnifromMat4f(RMI_Shader* shader, const char * uniform, mat4 m4);

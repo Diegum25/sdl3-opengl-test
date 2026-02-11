@@ -9,4 +9,6 @@
 
 typedef struct{
     unsigned int ID;
-} texture;
+} RMI_Texture;
+
+void RMIInitTexture(RMI_Texture*);

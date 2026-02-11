@@ -6,6 +6,6 @@ typedef struct {
     mat4 model;
     mat4 view;
     mat4 projection;
-} sceneMatrix;
+} RMI_SceneMatrix;
 
-void initSceneMatrix(sceneMatrix*, float w, float h);
+void RMIInitSceneMatrix(RMI_SceneMatrix*, float w, float h);

@@ -11,6 +11,13 @@ uniform mat4 projection;
 
 void main()
 {
-    gl_Position = transform * projection * view * model * vec4(aPos, 1.0); // MULTIPLICATION ORDER MATTERS WHAT THE FUCK
+    vec4 pos = transform * projection * view * model * vec4(aPos, 1.0); // MULTIPLICATION ORDER MATTERS WHAT THE FUCK
+
+    pos = floor((pos * 10))/10; // lowk cool asf
+
+    // dont know whats happening to .zw but i dont gaf
+
+    gl_Position = pos;
+
     TexPos = aTexPos;
 }

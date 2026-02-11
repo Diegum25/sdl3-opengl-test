@@ -23,6 +23,7 @@
 
 #include "sceneMatrix.h"
 #include "shader.h"
+#include "texture.h"
 
 /*
  * This example code $WHAT_IT_DOES.
@@ -38,7 +39,8 @@ static SDL_Window *window = NULL;
 /* This function runs once at startup. */
 
 
-shader regularShader;
+RMI_Shader regularShader;
+//RMI_Texture texture;
 
 unsigned int VBO, VAO, EBO, texture;
 
@@ -52,11 +54,11 @@ mat4 transform = {
     {0.0f,0.0f,0.0f,1.0f}
 };
 
-sceneMatrix matrix;
+RMI_SceneMatrix matrix;
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 {
-    initSceneMatrix(&matrix,width,height);
+    RMIInitSceneMatrix(&matrix,width,height);
 
     stbi_set_flip_vertically_on_load_thread(true);
 
@@ -91,7 +93,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 
     // --- Shaders & program ---
 
-    initShader(&regularShader);
+    RMIInitShader(&regularShader);
 
     // --- Vertex data and buffers ---
 
@@ -203,10 +205,10 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     glBindTexture(GL_TEXTURE_2D,texture);
 
     // I also dont know why these arent presisting
-    sendMat4f(&regularShader,"transform",transform);
-    sendMat4f(&regularShader,"model",matrix.model);
-    sendMat4f(&regularShader,"view",matrix.view);
-    sendMat4f(&regularShader,"projection",matrix.projection);
+    RMIUnifromMat4f(&regularShader,"transform",transform);
+    RMIUnifromMat4f(&regularShader,"model",matrix.model);
+    RMIUnifromMat4f(&regularShader,"view",matrix.view);
+    RMIUnifromMat4f(&regularShader,"projection",matrix.projection);
     
     glUseProgram(regularShader.program);
     glBindVertexArray(VAO);
