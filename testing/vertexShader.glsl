@@ -13,9 +13,10 @@ void main()
 {
     vec4 pos = transform * projection * view * model * vec4(aPos, 1.0); // MULTIPLICATION ORDER MATTERS WHAT THE FUCK
 
-    pos = floor((pos * 10))/10; // lowk cool asf
+    pos.xyz = floor((pos.xyz * 10))/10; // lowk cool asf
 
-    // dont know whats happening to .zw but i dont gaf
+    // dont know whats happening to .yz but i dont gaf
+    // w is bad though
 
     gl_Position = pos;
 

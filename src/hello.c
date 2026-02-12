@@ -98,12 +98,49 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     // --- Vertex data and buffers ---
 
     float verts[] = {
-    //Verts             //Texture
-    0.5f,  0.5f, 0.0f,  1.0f, 1.0f, // top right
-    0.5f, -0.5f, 0.0f,  1.0f, 0.0f, // bottom right
-    -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, // bottom left
-    -0.5f,  0.5f, 0.0f, 0.0f, 1.0f  // top left 
-    };
+    // Position         //Texture
+    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+    0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+    0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+    0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+    0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+    0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+    0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+    0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+    0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+    0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+    0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+    0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+    0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+    0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+    0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+    0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+    0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+};
 
     unsigned int indexes[] = {
     0, 1, 3,   // first triangle
@@ -127,9 +164,6 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     glBindBuffer(GL_ARRAY_BUFFER,VBO);
     glBufferData(GL_ARRAY_BUFFER,sizeof(verts),verts,GL_STATIC_DRAW);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indexes),indexes,GL_STATIC_DRAW);
-
     //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // end of sorts totally optional
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
@@ -148,9 +182,17 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     // uncomment this call to draw in wireframe polygons.
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-    /* glEnable(GL_CULL_FACE);
+    //glEnable(GL_CULL_FACE); // Face normals are currently ass
 
-    glCullFace(GL_FRONT); */
+    glCullFace(GL_BACK);
+
+    glEnable(GL_DEPTH_TEST);
+
+    glUseProgram(regularShader.program);
+    RMIUnifromMat4f(&regularShader,"transform",transform);
+    RMIUnifromMat4f(&regularShader,"model",matrix.model);
+    RMIUnifromMat4f(&regularShader,"view",matrix.view);
+    RMIUnifromMat4f(&regularShader,"projection",matrix.projection);
 
     return SDL_APP_CONTINUE;  /* carry on with the program! */
 }
@@ -188,16 +230,12 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     
     glUseProgram(regularShader.program);
-    // I also dont know why these arent presisting
-    RMIUnifromMat4f(&regularShader,"transform",transform);
-    RMIUnifromMat4f(&regularShader,"model",matrix.model);
     RMIUnifromMat4f(&regularShader,"view",matrix.view);
-    RMIUnifromMat4f(&regularShader,"projection",matrix.projection);
     glActiveTexture(GL_TEXTURE0); // SET HOUSE'S UNIT
     glBindTexture(GL_TEXTURE_2D,texture.ID);
 
     glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    glDrawArrays(GL_TRIANGLES, 0 , 36);
     glBindVertexArray(0);
 
     SDL_GL_SwapWindow(window);
