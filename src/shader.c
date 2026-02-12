@@ -6,11 +6,11 @@ void RMIInitShader(RMI_Shader *shader)
 {
     // Vertex Shader
     unsigned int vShader;
-    vShader = RMIUtilCreateFullShader(GL_VERTEX_SHADER,"vertexShader.glsl");
+    vShader = RMIUtilCreateFullShader(GL_VERTEX_SHADER,"testing/vertexShader.glsl");
 
     // Fragment Shader
     unsigned int fShader;
-    fShader = RMIUtilCreateFullShader(GL_FRAGMENT_SHADER,"fragmentShader.glsl");
+    fShader = RMIUtilCreateFullShader(GL_FRAGMENT_SHADER,"testing/fragmentShader.glsl");
 
     shader->program = glCreateProgram();
 

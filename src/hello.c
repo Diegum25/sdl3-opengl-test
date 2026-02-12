@@ -113,7 +113,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 
     // this has nothing to do with the VAO and can be used anywhere
 
-    RMIInitTexture(&texture,"house.bmp");
+    RMIInitTexture(&texture,"testing/house.bmp");
 
     // also need to put all this shit on a funcion
     glGenVertexArrays(1, &VAO);
