@@ -16,7 +16,7 @@
 #include <glad/glad.h>
 #include "util.h"
 
-#define STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_IMPLEMENTATION // DONT PUT THIS ANYWHERE ELSE
 #include "stb_image.h"
 
 #include "cglm/cglm.h"
@@ -40,9 +40,9 @@ static SDL_Window *window = NULL;
 
 
 RMI_Shader regularShader;
-//RMI_Texture texture;
+RMI_Texture texture;
 
-unsigned int VBO, VAO, EBO, texture;
+unsigned int VBO, VAO, EBO;
 
 int width = 640;
 int height = 480;
@@ -112,24 +112,10 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 
 
     // this has nothing to do with the VAO and can be used anywhere
+
+    RMIInitTexture(&texture,"house.bmp");
+
     // also need to put all this shit on a funcion
-    glGenTextures(1,&texture);
-
-    glBindTexture(GL_TEXTURE_2D,texture);
-
-    // ?
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-
-    int imgWidth, imgHeight, imgChannels;
-    unsigned char* imgData = stbi_load("house.bmp",&imgWidth,&imgHeight,&imgChannels,0);
-    glTexImage2D(GL_TEXTURE_2D,0, GL_RGB, imgWidth, imgHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, imgData);
-    glGenerateMipmap(GL_TEXTURE_2D);
-
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1,&VBO);
     glGenBuffers(1,&EBO);
@@ -200,17 +186,16 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     glViewport(0,0,width,height);
     glClearColor(0.0f,0.0f,0.0f,1.0f);
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-
-    glActiveTexture(GL_TEXTURE0); // SET HOUSE'S UNIT
-    glBindTexture(GL_TEXTURE_2D,texture);
-
+    
+    glUseProgram(regularShader.program);
     // I also dont know why these arent presisting
     RMIUnifromMat4f(&regularShader,"transform",transform);
     RMIUnifromMat4f(&regularShader,"model",matrix.model);
     RMIUnifromMat4f(&regularShader,"view",matrix.view);
     RMIUnifromMat4f(&regularShader,"projection",matrix.projection);
-    
-    glUseProgram(regularShader.program);
+    glActiveTexture(GL_TEXTURE0); // SET HOUSE'S UNIT
+    glBindTexture(GL_TEXTURE_2D,texture.ID);
+
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
