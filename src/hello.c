@@ -42,22 +42,38 @@ static SDL_Window *window = NULL;
 RMI_Shader regularShader;
 RMI_Texture texture;
 
-unsigned int VBO, VAO, EBO;
+unsigned int VBO, VAO;
 
 int width = 640;
 int height = 480;
 
-mat4 transform = {
-    {1.0f,0.0f,0.0f,0.0f},
-    {0.0f,1.0f,0.0f,0.0f},
-    {0.0f,0.0f,1.0f,0.0f},
-    {0.0f,0.0f,0.0f,1.0f}
+uint64_t time;
+
+vec3 cubePositions[] = {
+    { 0.0f,  0.0f,   0.0f},
+    { 2.0f,  5.0f, -15.0f},
+    {-1.5f, -2.2f,  -2.5f},
+    {-3.8f, -2.0f, -12.3f},
+    { 2.4f, -0.4f,  -3.5f},
+    {-1.7f,  3.0f,  -7.5f},
+    { 1.3f, -2.0f,  -2.5f},
+    { 1.5f,  2.0f,  -2.5f},
+    { 1.5f,  0.2f,  -1.5f},
+    {-1.3f,  1.0f,  -1.5f},
+    { 2.0f,  1.5f,  -6.0f},
+    {-2.0f, -1.5f,  -6.0f},
+    { 0.5f,  2.5f,  -4.0f},
+    {-0.5f, -2.5f,  -4.0f},
+    { 3.0f,  0.0f,  -8.0f}
 };
 
 RMI_SceneMatrix matrix;
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 {
+
+    time = SDL_GetTicks();
+
     RMIInitSceneMatrix(&matrix,width,height);
 
     stbi_set_flip_vertically_on_load_thread(true);
@@ -98,53 +114,48 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     // --- Vertex data and buffers ---
 
     float verts[] = {
-    // Position         //Texture
-    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-    0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-    0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-    0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+        // Position         // Texture
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+        0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
 
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-    0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-    0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-    0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
 
-    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
 
-    0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-    0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-    0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-    0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-    0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-    0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
 
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-    0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-    0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-    0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+        0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+        0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
 
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-    0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-    0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-    0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-};
-
-    unsigned int indexes[] = {
-    0, 1, 3,   // first triangle
-    1, 2, 3    // second triangle
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
     };
 
 
@@ -155,7 +166,6 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     // also need to put all this shit on a funcion
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1,&VBO);
-    glGenBuffers(1,&EBO);
     
     
     // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
@@ -189,7 +199,6 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     glEnable(GL_DEPTH_TEST);
 
     glUseProgram(regularShader.program);
-    RMIUnifromMat4f(&regularShader,"transform",transform);
     RMIUnifromMat4f(&regularShader,"model",matrix.model);
     RMIUnifromMat4f(&regularShader,"view",matrix.view);
     RMIUnifromMat4f(&regularShader,"projection",matrix.projection);
@@ -211,6 +220,10 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
             width = x;
             height = y;
             glm_perspective(glm_rad(45.0f),(float)x / (float)y, 0.1f,100.0f, matrix.projection);
+            if (regularShader.program){
+                glUseProgram(regularShader.program);
+                RMIUnifromMat4f(&regularShader,"projection",matrix.projection);
+            }
             //SDL_Log("New size:\nx=%d\ny=%d",width,height);
         }
     }
@@ -235,7 +248,25 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     glBindTexture(GL_TEXTURE_2D,texture.ID);
 
     glBindVertexArray(VAO);
-    glDrawArrays(GL_TRIANGLES, 0 , 36);
+    for (int i = 0; i < 15; i++){
+        mat4 model = {
+            {1.0f,0.0f,0.0f,0.0f},
+            {0.0f,1.0f,0.0f,0.0f},
+            {0.0f,0.0f,1.0f,0.0f},
+            {0.0f,0.0f,0.0f,1.0f}
+        };
+
+        glm_translate(model,cubePositions[i]);
+
+        float angle = (20.0f * i) + (SDL_GetTicks() - time)/32;
+
+        vec3 axis = {1.0f,0.3f,0.5f};
+        glm_rotate(model,glm_rad(angle),axis);
+
+        RMIUnifromMat4f(&regularShader,"model",model);
+
+        glDrawArrays(GL_TRIANGLES, 0 , 36);
+    }
     glBindVertexArray(0);
 
     SDL_GL_SwapWindow(window);
