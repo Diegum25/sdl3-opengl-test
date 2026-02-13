@@ -24,6 +24,7 @@
 #include "sceneMatrix.h"
 #include "shader.h"
 #include "texture.h"
+#include "camera.h"
 
 /*
  * This example code $WHAT_IT_DOES.
@@ -67,6 +68,7 @@ vec3 cubePositions[] = {
     { 3.0f,  0.0f,  -8.0f}
 };
 
+RMI_Camera camera;
 RMI_SceneMatrix matrix;
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
@@ -74,7 +76,9 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 
     time = SDL_GetTicks();
 
+    RMIInitCamera(&camera);
     RMIInitSceneMatrix(&matrix,width,height);
+    //glm_lookat(camera.position,camera.direction,camera.upAxis,matrix.view);
 
     stbi_set_flip_vertically_on_load_thread(true);
 
@@ -228,9 +232,19 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
         }
     }
     if (event->type == SDL_EVENT_MOUSE_MOTION){
-        float change = event->motion.xrel;
+        /* float change = event->motion.xrel;
         vec3 axis = {0.0f,1.0f,0.0f};
-        glm_rotate(matrix.view,glm_rad(change),axis);
+        glm_rotate(matrix.view,glm_rad(change),axis); */
+    }
+    if (event->type == SDL_EVENT_KEY_DOWN){
+        switch (event->key.key)
+        {
+        case SDLK_ESCAPE:
+            return SDL_APP_SUCCESS;
+            break;
+        default:
+            break;
+        }
     }
     return SDL_APP_CONTINUE;  /* carry on with the program! */
 }
@@ -238,11 +252,27 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
 /* This function runs once per frame, and is the heart of the program. */
 SDL_AppResult SDL_AppIterate(void *appstate)
 {
+    const bool* key_states = SDL_GetKeyboardState(NULL);
+
+    if (key_states[SDL_SCANCODE_W]){
+        camera.position[2] -= 0.1f;
+    }
+    if (key_states[SDL_SCANCODE_S]){
+        camera.position[2] += 0.1f;
+    }
+    if (key_states[SDL_SCANCODE_A]){
+        camera.position[0] -= 0.1f;
+    }
+    if (key_states[SDL_SCANCODE_D]){
+        camera.position[0] += 0.1f;
+    }
+
     glViewport(0,0,width,height);
     glClearColor(0.0f,0.0f,0.0f,1.0f);
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-    
+
     glUseProgram(regularShader.program);
+    glm_lookat(camera.position,camera.direction,camera.upAxis,matrix.view);
     RMIUnifromMat4f(&regularShader,"view",matrix.view);
     glActiveTexture(GL_TEXTURE0); // SET HOUSE'S UNIT
     glBindTexture(GL_TEXTURE_2D,texture.ID);
