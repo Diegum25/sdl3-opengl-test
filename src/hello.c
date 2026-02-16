@@ -239,8 +239,6 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
         testCamera.pitch += change;
         testCamera.front[0] = SDL_cos(glm_rad(testCamera.yaw));
         testCamera.front[2] = SDL_sin(glm_rad(testCamera.yaw));
-
-        glm_vec3_print(testCamera.front,stdout);
     }
     if (event->type == SDL_EVENT_KEY_DOWN){
         switch (event->key.key)
@@ -258,7 +256,6 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
 /* This function runs once per frame, and is the heart of the program. */
 SDL_AppResult SDL_AppIterate(void *appstate)
 {
-    // Keep this
     const bool* key_states = SDL_GetKeyboardState(NULL);
     const float speed = -0.1f;
     vec2 moveDir = {0.0f,0.0f};
@@ -282,13 +279,19 @@ SDL_AppResult SDL_AppIterate(void *appstate)
 
     // glm_vec2_print(moveDir,stdout);
 
-    // But make this actually work
-    vec3 positionAdd = {moveDir[0],0.0f,moveDir[1]};
+    vec3 fowardMovement = {moveDir[1],0.0f,moveDir[1]};
+    vec3 sideMovement = {moveDir[0],0.0f,moveDir[0]};
+    vec3 movement;
 
-    glm_vec3_mul(positionAdd,testCamera.front,positionAdd);
+    vec3 cameraSide = {-testCamera.front[2],0.0f,testCamera.front[0]};
 
-    glm_vec3_add(testCamera.position,positionAdd,testCamera.position);
+    glm_vec3_mul(testCamera.front,fowardMovement,movement);
 
+    glm_vec3_add(movement,testCamera.position,testCamera.position);
+
+    glm_vec3_mul(cameraSide,sideMovement,movement);
+
+    glm_vec3_add(movement,testCamera.position,testCamera.position);
 
     glViewport(0,0,width,height);
     glClearColor(0.0f,0.0f,0.0f,1.0f);
