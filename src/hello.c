@@ -74,9 +74,6 @@ RMI_SceneMatrix matrix;
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 {
-
-    time = SDL_GetTicks();
-
     RMIInitCamera(&camera);
     RMIInitTestCamera(&testCamera);
     RMIInitSceneMatrix(&matrix,width,height);
@@ -87,7 +84,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     SDL_SetAppMetadata("Example HUMAN READABLE NAME", "1.0", "com.example.CATEGORY-NAME");
 
     if (!SDL_Init(SDL_INIT_VIDEO)) {
-        SDL_Log("Couldn't initialize SDL: %s", SDL_GetError());
+        //SDL_Log("Couldn't initialize SDL: %s", SDL_GetError());
         return SDL_APP_FAILURE;
     }
 
@@ -112,6 +109,8 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 
     // Setup our function pointers
     gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress); // weird thing <- ****** ai wrote this shit
+
+    time = SDL_GetTicks();
 
     // --- Shaders & program ---
 
@@ -225,7 +224,25 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
         if (success){
             width = x;
             height = y;
-            glm_perspective(glm_rad(45.0f),(float)x / (float)y, 0.1f,100.0f, matrix.projection);
+            glm_perspective(glm_rad(testCamera.fov),(float)x / (float)y, 0.1f,100.0f, matrix.projection);
+            if (regularShader.program){
+                glUseProgram(regularShader.program);
+                RMIUnifromMat4f(&regularShader,"projection",matrix.projection);
+            }
+            //SDL_Log("New size:\nx=%d\ny=%d",width,height);
+        }
+    }
+    if (event->type == SDL_EVENT_MOUSE_WHEEL){
+        /* SDL_Log("change X:%f\n",event->wheel.x);
+        SDL_Log("change Y:%f\n",event->wheel.y); */
+        testCamera.fov += event->wheel.y;
+        int x;
+        int y;
+        bool success = SDL_GetWindowSizeInPixels(window,&x,&y);
+        if (success){
+            width = x;
+            height = y;
+            glm_perspective(glm_rad(testCamera.fov),(float)x / (float)y, 0.1f,100.0f, matrix.projection);
             if (regularShader.program){
                 glUseProgram(regularShader.program);
                 RMIUnifromMat4f(&regularShader,"projection",matrix.projection);
@@ -234,17 +251,31 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
         }
     }
     if (event->type == SDL_EVENT_MOUSE_MOTION){
-        float change = event->motion.xrel;
-        testCamera.yaw += change;
-        testCamera.pitch += change;
-        testCamera.front[0] = SDL_cos(glm_rad(testCamera.yaw));
-        testCamera.front[2] = SDL_sin(glm_rad(testCamera.yaw));
+        float changeX = event->motion.xrel;
+        float changeY = -event->motion.yrel;
+        testCamera.yaw += changeX;
+
+        SDL_Log("yaw: %f\n",testCamera.yaw);
+
+        testCamera.pitch = glm_clamp(testCamera.pitch + changeY,-89.0f,89.0f);
+
+        testCamera.front[0] = cos(glm_rad(testCamera.yaw)) * cos(glm_rad(testCamera.pitch));
+        testCamera.front[1] = sin(glm_rad(testCamera.pitch));
+        testCamera.front[2] = sin(glm_rad(testCamera.yaw)) * cos(glm_rad(testCamera.pitch));
+        glm_normalize(testCamera.front);
+        //printf("yaw:%f\n",testCamera.yaw);
     }
     if (event->type == SDL_EVENT_KEY_DOWN){
         switch (event->key.key)
         {
         case SDLK_ESCAPE:
             return SDL_APP_SUCCESS;
+            break;
+        case SDLK_B:
+            SDL_SetWindowRelativeMouseMode(window,true);
+            break;
+        case SDLK_V:
+            SDL_SetWindowRelativeMouseMode(window,false);
             break;
         default:
             break;
@@ -279,8 +310,13 @@ SDL_AppResult SDL_AppIterate(void *appstate)
 
     // glm_vec2_print(moveDir,stdout);
 
+    vec3 moveSpeed = {0.1f,0.1f,0.1f};
     vec3 fowardMovement = {moveDir[1],0.0f,moveDir[1]};
     vec3 sideMovement = {moveDir[0],0.0f,moveDir[0]};
+
+    glm_vec3_mul(fowardMovement,moveSpeed,fowardMovement);
+    glm_vec3_mul(sideMovement,moveSpeed,sideMovement);
+
     vec3 movement;
 
     vec3 cameraSide = {-testCamera.front[2],0.0f,testCamera.front[0]};

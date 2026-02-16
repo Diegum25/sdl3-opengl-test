@@ -39,6 +39,8 @@ void RMIInitTestCamera(RMI_TestCamera *camera)
     camera->up[1] = 1.0f;
     camera->up[2] = 0.0f;
 
-    camera->pitch = -90.0f;
-    camera->yaw = 0.0f;
+    camera->pitch = 0.0f;
+    camera->yaw = -90.0f;
+
+    camera->fov = 45.0f;
 }

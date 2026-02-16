@@ -18,6 +18,7 @@ typedef struct {
     vec3 up;
     float yaw;
     float pitch;
+    float fov;
 }RMI_TestCamera;
 
 void RMIInitTestCamera(RMI_TestCamera *camera);
