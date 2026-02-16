@@ -69,6 +69,7 @@ vec3 cubePositions[] = {
 };
 
 RMI_Camera camera;
+RMI_TestCamera testCamera;
 RMI_SceneMatrix matrix;
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
@@ -77,6 +78,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     time = SDL_GetTicks();
 
     RMIInitCamera(&camera);
+    RMIInitTestCamera(&testCamera);
     RMIInitSceneMatrix(&matrix,width,height);
     //glm_lookat(camera.position,camera.direction,camera.upAxis,matrix.view);
 
@@ -232,9 +234,13 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
         }
     }
     if (event->type == SDL_EVENT_MOUSE_MOTION){
-        /* float change = event->motion.xrel;
-        vec3 axis = {0.0f,1.0f,0.0f};
-        glm_rotate(matrix.view,glm_rad(change),axis); */
+        float change = event->motion.xrel;
+        testCamera.yaw += change;
+        testCamera.pitch += change;
+        testCamera.front[0] = SDL_cos(glm_rad(testCamera.yaw));
+        testCamera.front[2] = SDL_sin(glm_rad(testCamera.yaw));
+
+        glm_vec3_print(testCamera.front,stdout);
     }
     if (event->type == SDL_EVENT_KEY_DOWN){
         switch (event->key.key)
@@ -252,27 +258,46 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
 /* This function runs once per frame, and is the heart of the program. */
 SDL_AppResult SDL_AppIterate(void *appstate)
 {
+    // Keep this
     const bool* key_states = SDL_GetKeyboardState(NULL);
+    const float speed = -0.1f;
+    vec2 moveDir = {0.0f,0.0f};
 
     if (key_states[SDL_SCANCODE_W]){
-        camera.position[2] -= 0.1f;
+        vec2 add = {0.0f,1.0f};
+        glm_vec2_add(moveDir,add,moveDir);
     }
     if (key_states[SDL_SCANCODE_S]){
-        camera.position[2] += 0.1f;
+        vec2 add = {0.0f,-1.0f};
+        glm_vec2_add(moveDir,add,moveDir);
     }
     if (key_states[SDL_SCANCODE_A]){
-        camera.position[0] -= 0.1f;
+        vec2 add = {-1.0f,0.0f};
+        glm_vec2_add(moveDir,add,moveDir);
     }
     if (key_states[SDL_SCANCODE_D]){
-        camera.position[0] += 0.1f;
+        vec2 add = {1.0f,0.0f};
+        glm_vec2_add(moveDir,add,moveDir);
     }
+
+    // glm_vec2_print(moveDir,stdout);
+
+    // But make this actually work
+    vec3 positionAdd = {moveDir[0],0.0f,moveDir[1]};
+
+    glm_vec3_mul(positionAdd,testCamera.front,positionAdd);
+
+    glm_vec3_add(testCamera.position,positionAdd,testCamera.position);
+
 
     glViewport(0,0,width,height);
     glClearColor(0.0f,0.0f,0.0f,1.0f);
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
     glUseProgram(regularShader.program);
-    glm_lookat(camera.position,camera.direction,camera.upAxis,matrix.view);
+    vec3 sum;
+    glm_vec3_add(testCamera.position,testCamera.front,sum);
+    glm_lookat(testCamera.position,sum,testCamera.up,matrix.view);
     RMIUnifromMat4f(&regularShader,"view",matrix.view);
     glActiveTexture(GL_TEXTURE0); // SET HOUSE'S UNIT
     glBindTexture(GL_TEXTURE_2D,texture.ID);

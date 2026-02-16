@@ -24,3 +24,21 @@ void RMICameraUpdate(RMI_Camera *camera)
 
     glm_vec3_cross(camera->direction,camera->rightAxis,camera->upAxis);
 }
+
+void RMIInitTestCamera(RMI_TestCamera *camera)
+{
+    camera->position[0] = 0.0f;
+    camera->position[1] = 0.0f;
+    camera->position[2] = 3.0f;
+
+    camera->front[0] = 0.0f;
+    camera->front[1] = 0.0f;
+    camera->front[2] = -1.0f;
+
+    camera->up[0] = 0.0f;
+    camera->up[1] = 1.0f;
+    camera->up[2] = 0.0f;
+
+    camera->pitch = -90.0f;
+    camera->yaw = 0.0f;
+}
