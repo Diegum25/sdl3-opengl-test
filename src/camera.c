@@ -1,5 +1,5 @@
 #include "camera.h"
-#include "SDL3/SDL.h"
+#include <SDL3/SDL.h>
 
 void RMIInitCamera(RMI_Camera *camera)
 {
@@ -25,6 +25,7 @@ void RMIInitCamera(RMI_Camera *camera)
     camera->speed[1] = 0.1f;
     camera->speed[2] = 0.1f;
 
+    glm_vec3_add(camera->position,camera->front,camera->view);
 }
 
 void RMICameraFlight(RMI_Camera *camera, vec2 movementVec)
@@ -37,11 +38,11 @@ void RMICameraFlight(RMI_Camera *camera, vec2 movementVec)
 
     vec3 movement; // general
 
-    float yaw = SDL_atan2(camera->front[2],camera->front[0]);
+    vec3 cameraSide;
 
-    vec3 cutdownFront = {(float)SDL_cos(yaw),0.0f,(float)SDL_sin(yaw)};
+    glm_cross(camera->front,camera->up,cameraSide);
 
-    vec3 cameraSide = {-cutdownFront[2],0.0f,cutdownFront[0]};
+    glm_normalize(cameraSide);
 
     glm_vec3_mul(camera->front,fowardMovement,movement);
 
@@ -50,6 +51,8 @@ void RMICameraFlight(RMI_Camera *camera, vec2 movementVec)
     glm_vec3_mul(cameraSide,sideMovement,movement);
 
     glm_vec3_add(movement,camera->position,camera->position);
+
+    glm_vec3_add(camera->position,camera->front,camera->view);
 }
 
 void RMICameraFloat(RMI_Camera *camera, vec2 movementVec)
@@ -62,9 +65,7 @@ void RMICameraFloat(RMI_Camera *camera, vec2 movementVec)
 
     vec3 movement; // general
 
-    float yaw = SDL_atan2(camera->front[2],camera->front[0]);
-
-    vec3 cutdownFront = {(float)SDL_cos(yaw),0.0f,(float)SDL_sin(yaw)};
+    vec3 cutdownFront = {SDL_cos(glm_rad(camera->yaw)),0.0f,SDL_sin(glm_rad(camera->yaw))};
 
     vec3 cameraSide = {-cutdownFront[2],0.0f,cutdownFront[0]};
 
@@ -75,4 +76,6 @@ void RMICameraFloat(RMI_Camera *camera, vec2 movementVec)
     glm_vec3_mul(cameraSide,sideMovement,movement);
 
     glm_vec3_add(movement,camera->position,camera->position);
+
+    glm_vec3_add(camera->position,camera->front,camera->view);
 }

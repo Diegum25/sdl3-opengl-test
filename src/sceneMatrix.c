@@ -30,6 +30,4 @@ void RMIInitSceneMatrix(RMI_SceneMatrix * matrix, float sceneWidth, float sceneH
     glm_translate(matrix->view,axis2); */
     // projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
     glm_perspective(glm_rad(45.0f),sceneWidth / sceneHeight, 0.1f,100.0f, matrix->projection);
-
-    glm_mat4_print(matrix->projection,stdout);
 }

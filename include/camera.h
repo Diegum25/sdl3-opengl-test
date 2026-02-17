@@ -6,6 +6,7 @@ typedef struct {
     vec3 front;
     vec3 up;
     vec3 speed;
+    vec3 view;
     float yaw;
     float pitch;
     float fov;

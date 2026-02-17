@@ -306,17 +306,17 @@ SDL_AppResult SDL_AppIterate(void *appstate)
         glm_vec2_add(moveDir,add,moveDir);
     }
 
-    // glm_vec2_print(moveDir,stdout);
+    glm_vec2_normalize(moveDir); // emulate circular analog stick
 
-    RMICameraFlight(&camera,moveDir);
+    //  glm_vec2_print(moveDir,stdout);
+
+    RMICameraFloat(&camera,moveDir);
 
     glViewport(0,0,width,height);
     glClearColor(0.1f,0.1f,0.1f,1.0f);
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-    vec3 sum;
-    glm_vec3_add(camera.position,camera.front,sum);
-    glm_lookat(camera.position,sum,camera.up,matrix.view);
+    glm_lookat(camera.position,camera.view,camera.up,matrix.view);
     RMIUnifromMat4f(&regularShader,"view",matrix.view);
     glActiveTexture(GL_TEXTURE0); // SET HOUSE'S UNIT
     glUseProgram(regularShader.program);
