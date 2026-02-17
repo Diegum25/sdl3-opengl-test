@@ -255,15 +255,15 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
         float changeY = -event->motion.yrel;
         testCamera.yaw += changeX;
 
-        SDL_Log("yaw: %f\n",testCamera.yaw);
+        //SDL_Log("yaw: %f\n",testCamera.yaw);
 
         testCamera.pitch = glm_clamp(testCamera.pitch + changeY,-89.0f,89.0f);
 
-        testCamera.front[0] = cos(glm_rad(testCamera.yaw)) * cos(glm_rad(testCamera.pitch));
-        testCamera.front[1] = sin(glm_rad(testCamera.pitch));
-        testCamera.front[2] = sin(glm_rad(testCamera.yaw)) * cos(glm_rad(testCamera.pitch));
+        testCamera.front[0] = SDL_cos(glm_rad(testCamera.yaw)) * SDL_cos(glm_rad(testCamera.pitch));
+        testCamera.front[1] = SDL_sin(glm_rad(testCamera.pitch));
+        testCamera.front[2] = SDL_sin(glm_rad(testCamera.yaw)) * SDL_cos(glm_rad(testCamera.pitch));
         glm_normalize(testCamera.front);
-        //printf("yaw:%f\n",testCamera.yaw);
+        //SDL_Log("yaw:%f\n",testCamera.yaw);
     }
     if (event->type == SDL_EVENT_KEY_DOWN){
         switch (event->key.key)
