@@ -1,5 +1,7 @@
 #pragma once
 
+// old stuff
+
 #include <SDL3/SDL.h>
 #include <glad/glad.h>
 #include <stdio.h>

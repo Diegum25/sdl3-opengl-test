@@ -24,17 +24,17 @@ void RMIInitShader(RMI_Shader *shader)
     glDeleteShader(fShader);  
 }
 
-void RMIUniformInt(RMI_Shader *shader, const char* uniform, int x)
+void RMIUniformInt(RMI_Shader *shader, const char* uniform, int x) // we dont need to be bound
 {
     glUniform1i(glGetUniformLocation(shader->program,uniform),x);
 }
 
-void RMIUnifromFloat(RMI_Shader *shader, const char *uniform, float f)
+void RMIUnifromFloat(RMI_Shader *shader, const char *uniform, float f) // we dont need to be bound
 {
     glUniform1f(glGetUniformLocation(shader->program,uniform),f);
 }
 
-void RMIUnifromMat4f(RMI_Shader *shader, const char *uniform, mat4 m4)
+void RMIUnifromMat4f(RMI_Shader *shader, const char *uniform, mat4 m4) // we dont need to be bound
 {
     glUniformMatrix4fv(glGetUniformLocation(shader->program,uniform),1,GL_FALSE,(const float*)m4);
 }

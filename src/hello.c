@@ -69,13 +69,11 @@ vec3 cubePositions[] = {
 };
 
 RMI_Camera camera;
-RMI_TestCamera testCamera;
 RMI_SceneMatrix matrix;
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 {
     RMIInitCamera(&camera);
-    RMIInitTestCamera(&testCamera);
     RMIInitSceneMatrix(&matrix,width,height);
     //glm_lookat(camera.position,camera.direction,camera.upAxis,matrix.view);
 
@@ -224,7 +222,7 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
         if (success){
             width = x;
             height = y;
-            glm_perspective(glm_rad(testCamera.fov),(float)x / (float)y, 0.1f,100.0f, matrix.projection);
+            glm_perspective(glm_rad(camera.fov),(float)x / (float)y, 0.1f,100.0f, matrix.projection);
             if (regularShader.program){
                 glUseProgram(regularShader.program);
                 RMIUnifromMat4f(&regularShader,"projection",matrix.projection);
@@ -235,14 +233,14 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
     if (event->type == SDL_EVENT_MOUSE_WHEEL){
         /* SDL_Log("change X:%f\n",event->wheel.x);
         SDL_Log("change Y:%f\n",event->wheel.y); */
-        testCamera.fov += event->wheel.y;
+        camera.fov += event->wheel.y;
         int x;
         int y;
         bool success = SDL_GetWindowSizeInPixels(window,&x,&y);
         if (success){
             width = x;
             height = y;
-            glm_perspective(glm_rad(testCamera.fov),(float)x / (float)y, 0.1f,100.0f, matrix.projection);
+            glm_perspective(glm_rad(camera.fov),(float)x / (float)y, 0.1f,100.0f, matrix.projection);
             if (regularShader.program){
                 glUseProgram(regularShader.program);
                 RMIUnifromMat4f(&regularShader,"projection",matrix.projection);
@@ -253,17 +251,17 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
     if (event->type == SDL_EVENT_MOUSE_MOTION){
         float changeX = event->motion.xrel;
         float changeY = -event->motion.yrel;
-        testCamera.yaw += changeX;
+        camera.yaw += changeX;
 
-        //SDL_Log("yaw: %f\n",testCamera.yaw);
+        //SDL_Log("yaw: %f\n",camera.yaw);
 
-        testCamera.pitch = glm_clamp(testCamera.pitch + changeY,-89.0f,89.0f);
+        camera.pitch = glm_clamp(camera.pitch + changeY,-89.0f,89.0f);
 
-        testCamera.front[0] = SDL_cos(glm_rad(testCamera.yaw)) * SDL_cos(glm_rad(testCamera.pitch));
-        testCamera.front[1] = SDL_sin(glm_rad(testCamera.pitch));
-        testCamera.front[2] = SDL_sin(glm_rad(testCamera.yaw)) * SDL_cos(glm_rad(testCamera.pitch));
-        glm_normalize(testCamera.front);
-        //SDL_Log("yaw:%f\n",testCamera.yaw);
+        camera.front[0] = SDL_cos(glm_rad(camera.yaw)) * SDL_cos(glm_rad(camera.pitch));
+        camera.front[1] = SDL_sin(glm_rad(camera.pitch));
+        camera.front[2] = SDL_sin(glm_rad(camera.yaw)) * SDL_cos(glm_rad(camera.pitch));
+        glm_normalize(camera.front);
+        //SDL_Log("yaw:%f\n",camera.yaw);
     }
     if (event->type == SDL_EVENT_KEY_DOWN){
         switch (event->key.key)
@@ -310,35 +308,18 @@ SDL_AppResult SDL_AppIterate(void *appstate)
 
     // glm_vec2_print(moveDir,stdout);
 
-    vec3 moveSpeed = {0.1f,0.1f,0.1f};
-    vec3 fowardMovement = {moveDir[1],0.0f,moveDir[1]};
-    vec3 sideMovement = {moveDir[0],0.0f,moveDir[0]};
-
-    glm_vec3_mul(fowardMovement,moveSpeed,fowardMovement);
-    glm_vec3_mul(sideMovement,moveSpeed,sideMovement);
-
-    vec3 movement;
-
-    vec3 cameraSide = {-testCamera.front[2],0.0f,testCamera.front[0]};
-
-    glm_vec3_mul(testCamera.front,fowardMovement,movement);
-
-    glm_vec3_add(movement,testCamera.position,testCamera.position);
-
-    glm_vec3_mul(cameraSide,sideMovement,movement);
-
-    glm_vec3_add(movement,testCamera.position,testCamera.position);
+    RMICameraFlight(&camera,moveDir);
 
     glViewport(0,0,width,height);
     glClearColor(0.0f,0.0f,0.0f,1.0f);
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-    glUseProgram(regularShader.program);
     vec3 sum;
-    glm_vec3_add(testCamera.position,testCamera.front,sum);
-    glm_lookat(testCamera.position,sum,testCamera.up,matrix.view);
+    glm_vec3_add(camera.position,camera.front,sum);
+    glm_lookat(camera.position,sum,camera.up,matrix.view);
     RMIUnifromMat4f(&regularShader,"view",matrix.view);
     glActiveTexture(GL_TEXTURE0); // SET HOUSE'S UNIT
+    glUseProgram(regularShader.program);
     glBindTexture(GL_TEXTURE_2D,texture.ID);
 
     glBindVertexArray(VAO);

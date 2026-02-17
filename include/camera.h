@@ -3,22 +3,16 @@
 
 typedef struct {
     vec3 position;
-    vec3 target;
-    vec3 direction;
-    vec3 rightAxis;
-    vec3 upAxis;
-}RMI_Camera;
-
-void RMIInitCamera(RMI_Camera *camera);
-void RMICameraUpdate(RMI_Camera *camera);
-
-typedef struct {
-    vec3 position;
     vec3 front;
     vec3 up;
+    vec3 speed;
     float yaw;
     float pitch;
     float fov;
-}RMI_TestCamera;
+}RMI_Camera;
 
-void RMIInitTestCamera(RMI_TestCamera *camera);
+void RMIInitCamera(RMI_Camera *camera);
+
+void RMICameraFlight(RMI_Camera* camera, vec2 movementVec);
+
+void RMICameraFloat(RMI_Camera* camera, vec2 movementVec); // we all float (pennywise booty cheeks)
