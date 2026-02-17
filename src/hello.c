@@ -249,8 +249,8 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
         }
     }
     if (event->type == SDL_EVENT_MOUSE_MOTION){
-        float changeX = event->motion.xrel;
-        float changeY = -event->motion.yrel;
+        float changeX = event->motion.xrel * 0.15f;
+        float changeY = -event->motion.yrel * 0.15f;
         camera.yaw += changeX;
 
         //SDL_Log("yaw: %f\n",camera.yaw);
@@ -311,7 +311,7 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     RMICameraFlight(&camera,moveDir);
 
     glViewport(0,0,width,height);
-    glClearColor(0.0f,0.0f,0.0f,1.0f);
+    glClearColor(0.1f,0.1f,0.1f,1.0f);
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
     vec3 sum;
