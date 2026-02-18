@@ -2,6 +2,12 @@
 
 Building instructions at [BUILDING.md](BUILDING.md).
 
+Structs are defined as RMI_NameOfStruct
+
+And functions are defined as RMINameOfFunction()
+
+idk
+
 ## Licenses
 
 [**SDL**](https://github.com/libsdl-org/SDL) - Zlib license
