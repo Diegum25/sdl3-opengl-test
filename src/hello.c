@@ -40,10 +40,10 @@ static SDL_Window *window = NULL;
 /* This function runs once at startup. */
 
 
-RMI_Shader regularShader;
+RMI_Shader regularShader, anotherShader;
 RMI_Texture texture;
 
-unsigned int VBO, VAO;
+unsigned int VBO, VAO, VAO2;
 
 int width = 640;
 int height = 480;
@@ -112,7 +112,11 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 
     // --- Shaders & program ---
 
-    RMIInitShader(&regularShader);
+    RMIInitShader(&regularShader,"testing/vertexShader.glsl","testing/fragmentShader.glsl",&matrix);
+    RMIInitShader(&anotherShader,"testing/simpleVShader.glsl","testing/simpleFShader.glsl",&matrix);
+    vec3 color = {1.0f,1.0f,1.0f};
+    RMIUniformVec3(&anotherShader,"objectColor",color);
+    RMIUniformVec3(&anotherShader,"lightColor",color);
 
     // --- Vertex data and buffers ---
 
@@ -191,6 +195,13 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
     glBindVertexArray(0); // end of sorts this all goes into the VAO. i believe
 
+    glGenVertexArrays(1, &VAO2);
+    glBindVertexArray(VAO2);
+
+    glBindBuffer(GL_ARRAY_BUFFER,VBO);
+    glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,5* sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    glBindVertexArray(0);
 
     // uncomment this call to draw in wireframe polygons.
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -200,11 +211,6 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     glCullFace(GL_BACK);
 
     glEnable(GL_DEPTH_TEST);
-
-    glUseProgram(regularShader.program);
-    RMIUnifromMat4f(&regularShader,"model",matrix.model);
-    RMIUnifromMat4f(&regularShader,"view",matrix.view);
-    RMIUnifromMat4f(&regularShader,"projection",matrix.projection);
 
     return SDL_APP_CONTINUE;  /* carry on with the program! */
 }
@@ -222,11 +228,6 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
         if (success){
             width = x;
             height = y;
-            glm_perspective(glm_rad(camera.fov),(float)x / (float)y, 0.1f,100.0f, matrix.projection);
-            if (regularShader.program){
-                glUseProgram(regularShader.program);
-                RMIUnifromMat4f(&regularShader,"projection",matrix.projection);
-            }
             //SDL_Log("New size:\nx=%d\ny=%d",width,height);
         }
     }
@@ -240,11 +241,6 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
         if (success){
             width = x;
             height = y;
-            glm_perspective(glm_rad(camera.fov),(float)x / (float)y, 0.1f,100.0f, matrix.projection);
-            if (regularShader.program){
-                glUseProgram(regularShader.program);
-                RMIUnifromMat4f(&regularShader,"projection",matrix.projection);
-            }
             //SDL_Log("New size:\nx=%d\ny=%d",width,height);
         }
     }
@@ -310,16 +306,19 @@ SDL_AppResult SDL_AppIterate(void *appstate)
 
     //  glm_vec2_print(moveDir,stdout);
 
-    RMICameraFloat(&camera,moveDir);
+    RMICameraFlight(&camera,moveDir);
+    glm_perspective(glm_rad(camera.fov),(float)width / (float)height, 0.1f,100.0f, matrix.projection);
+    glm_lookat(camera.position,camera.view,camera.up,matrix.view);
 
     glViewport(0,0,width,height);
     glClearColor(0.1f,0.1f,0.1f,1.0f);
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-    glm_lookat(camera.position,camera.view,camera.up,matrix.view);
-    RMIUnifromMat4f(&regularShader,"view",matrix.view);
-    glActiveTexture(GL_TEXTURE0); // SET HOUSE'S UNIT
     glUseProgram(regularShader.program);
+
+    RMIUniformMat4f(&regularShader,"projection",matrix.projection);
+    RMIUniformMat4f(&regularShader,"view",matrix.view);
+    glActiveTexture(GL_TEXTURE0); // SET HOUSE'S UNIT
     glBindTexture(GL_TEXTURE_2D,texture.ID);
 
     glBindVertexArray(VAO);
@@ -338,10 +337,24 @@ SDL_AppResult SDL_AppIterate(void *appstate)
         vec3 axis = {1.0f,0.3f,0.5f};
         glm_rotate(model,glm_rad(angle),axis);
 
-        RMIUnifromMat4f(&regularShader,"model",model);
+        RMIUniformMat4f(&regularShader,"model",model);
 
         glDrawArrays(GL_TRIANGLES, 0 , 36);
     }
+    glUseProgram(anotherShader.program);
+        mat4 model = {
+            {1.0f,0.0f,0.0f,0.0f},
+            {0.0f,1.0f,0.0f,0.0f},
+            {0.0f,0.0f,1.0f,0.0f},
+            {0.0f,0.0f,0.0f,1.0f}
+    };
+    vec3 pos = {0.0f,0.0f,-10.0f};
+    glm_translate(model,pos);
+    RMIUniformMat4f(&anotherShader,"model",model);
+    RMIUniformMat4f(&anotherShader,"projection",matrix.projection);
+    RMIUniformMat4f(&anotherShader,"view",matrix.view);
+    glBindVertexArray(VAO2);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
     glBindVertexArray(0);
 
     SDL_GL_SwapWindow(window);
