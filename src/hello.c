@@ -68,6 +68,9 @@ vec3 cubePositions[] = {
     { 3.0f,  0.0f,  -8.0f}
 };
 
+vec3 lightPosition = {0.0f,0.0f,-10.0f};
+vec3 lightColour = {1.0f,1.0f,1.0f};
+
 RMI_Camera camera;
 RMI_SceneMatrix matrix;
 
@@ -114,9 +117,6 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 
     RMIInitShader(&regularShader,"testing/vertexShader.glsl","testing/fragmentShader.glsl",&matrix);
     RMIInitShader(&anotherShader,"testing/simpleVShader.glsl","testing/simpleFShader.glsl",&matrix);
-    vec3 color = {1.0f,1.0f,1.0f};
-    RMIUniformVec3(&anotherShader,"objectColor",color);
-    RMIUniformVec3(&anotherShader,"lightColor",color);
 
     // --- Vertex data and buffers ---
 
@@ -271,6 +271,24 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
         case SDLK_V:
             SDL_SetWindowRelativeMouseMode(window,false);
             break;
+        case SDLK_N:
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+            break;
+        case SDLK_M:
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);    
+            break;
+        case SDLK_DOWN:
+            lightPosition[2] -= 1.0f;
+            break;
+        case SDLK_UP:
+            lightPosition[2] += 1.0f;
+            break;
+        case SDLK_RIGHT:
+            lightPosition[0] -= 1.0f;
+            break;
+        case SDLK_LEFT:
+            lightPosition[0] += 1.0f;
+            break;
         default:
             break;
         }
@@ -310,6 +328,11 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     glm_perspective(glm_rad(camera.fov),(float)width / (float)height, 0.1f,100.0f, matrix.projection);
     glm_lookat(camera.position,camera.view,camera.up,matrix.view);
 
+    //party time!
+    /* lightColour [0] = (SDL_sin(SDL_GetTicks() / 128) + 1.0)/2.0;
+    lightColour [1] = (SDL_cos(SDL_GetTicks() / 64) + 1.0)/2.0;
+    lightColour [2] = (SDL_sin((SDL_GetTicks() + 20.0) / 128) + 1.0)/2.0; */
+
     glViewport(0,0,width,height);
     glClearColor(0.1f,0.1f,0.1f,1.0f);
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
@@ -339,6 +362,16 @@ SDL_AppResult SDL_AppIterate(void *appstate)
 
         RMIUniformMat4f(&regularShader,"model",model);
 
+        //distance to light
+        const float falloff = 25.0f;
+        float distance = glm_vec3_distance(lightPosition,cubePositions[i]);
+        
+        float lightAmount = glm_clamp((-distance/falloff) + 1.0f,0.0f,1.0f);
+
+        RMIUniformFloat(&regularShader,"lightAmount",lightAmount);
+        RMIUniformVec3(&regularShader,"lightColour",lightColour);
+
+
         glDrawArrays(GL_TRIANGLES, 0 , 36);
     }
     glUseProgram(anotherShader.program);
@@ -348,11 +381,11 @@ SDL_AppResult SDL_AppIterate(void *appstate)
             {0.0f,0.0f,1.0f,0.0f},
             {0.0f,0.0f,0.0f,1.0f}
     };
-    vec3 pos = {0.0f,0.0f,-10.0f};
-    glm_translate(model,pos);
+    glm_translate(model,lightPosition);
     RMIUniformMat4f(&anotherShader,"model",model);
     RMIUniformMat4f(&anotherShader,"projection",matrix.projection);
     RMIUniformMat4f(&anotherShader,"view",matrix.view);
+    RMIUniformVec3(&anotherShader,"lightColor",lightColour);
     glBindVertexArray(VAO2);
     glDrawArrays(GL_TRIANGLES, 0, 36);
     glBindVertexArray(0);
