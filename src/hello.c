@@ -223,11 +223,11 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE, 3 * sizeof(float),(void*)0);
     glEnableVertexAttribArray(0);
 
-    free(objCube.verts);
-    free(objCube.indexes);
-
     glBindVertexArray(0);
 
+    free(objCube.verts);
+    free(objCube.indexes);
+    
     // uncomment this call to draw in wireframe polygons.
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
