@@ -25,6 +25,7 @@
 #include "shader.h"
 #include "texture.h"
 #include "camera.h"
+#include "obj.h"
 
 /*
  * This example code $WHAT_IT_DOES.
@@ -40,10 +41,10 @@ static SDL_Window *window = NULL;
 /* This function runs once at startup. */
 
 
-RMI_Shader regularShader;
+RMI_Shader regularShader, anotherShader;
 RMI_Texture texture;
 
-unsigned int VBO, VAO;
+unsigned int VBO, VAO, VAO2, VBO3, VAO3, EBO3;
 
 int width = 640;
 int height = 480;
@@ -68,8 +69,13 @@ vec3 cubePositions[] = {
     { 3.0f,  0.0f,  -8.0f}
 };
 
+vec3 lightPosition = {0.0f,0.0f,-10.0f};
+vec3 lightColour = {1.0f,1.0f,1.0f};
+
 RMI_Camera camera;
 RMI_SceneMatrix matrix;
+
+RMI_obj objCube;
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 {
@@ -112,7 +118,8 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 
     // --- Shaders & program ---
 
-    RMIInitShader(&regularShader);
+    RMIInitShader(&regularShader,"testing/vertexShader.glsl","testing/fragmentShader.glsl",&matrix);
+    RMIInitShader(&anotherShader,"testing/simpleVShader.glsl","testing/simpleFShader.glsl",&matrix);
 
     // --- Vertex data and buffers ---
 
@@ -161,6 +168,8 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
         -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
     };
 
+    loadOBJ(&objCube,"testing/teapot.obj");
+    //printf("%ld\n",sizeof(float)* objCube.vertsAmnt);
 
     // this has nothing to do with the VAO and can be used anywhere
 
@@ -191,20 +200,42 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
     glBindVertexArray(0); // end of sorts this all goes into the VAO. i believe
 
+    glGenVertexArrays(1, &VAO2);
+    glBindVertexArray(VAO2);
 
+    glBindBuffer(GL_ARRAY_BUFFER,VBO);
+    glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,5* sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    glBindVertexArray(0);
+
+    glGenVertexArrays(1,&VAO3);
+    glGenBuffers(1,&VBO3);
+    glGenBuffers(1,&EBO3);
+
+    glBindVertexArray(VAO3);
+
+    glBindBuffer(GL_ARRAY_BUFFER,VBO3);
+    glBufferData(GL_ARRAY_BUFFER,sizeof(float) * objCube.vertsAmnt, objCube.verts,GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,EBO3);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * objCube.indexAmnt, objCube.indexes,GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE, 3 * sizeof(float),(void*)0);
+    glEnableVertexAttribArray(0);
+
+    glBindVertexArray(0);
+
+    free(objCube.verts);
+    free(objCube.indexes);
+    
     // uncomment this call to draw in wireframe polygons.
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
     //glEnable(GL_CULL_FACE); // Face normals are currently ass
 
     glCullFace(GL_BACK);
 
     glEnable(GL_DEPTH_TEST);
-
-    glUseProgram(regularShader.program);
-    RMIUnifromMat4f(&regularShader,"model",matrix.model);
-    RMIUnifromMat4f(&regularShader,"view",matrix.view);
-    RMIUnifromMat4f(&regularShader,"projection",matrix.projection);
 
     return SDL_APP_CONTINUE;  /* carry on with the program! */
 }
@@ -222,11 +253,6 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
         if (success){
             width = x;
             height = y;
-            glm_perspective(glm_rad(camera.fov),(float)x / (float)y, 0.1f,100.0f, matrix.projection);
-            if (regularShader.program){
-                glUseProgram(regularShader.program);
-                RMIUnifromMat4f(&regularShader,"projection",matrix.projection);
-            }
             //SDL_Log("New size:\nx=%d\ny=%d",width,height);
         }
     }
@@ -240,11 +266,6 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
         if (success){
             width = x;
             height = y;
-            glm_perspective(glm_rad(camera.fov),(float)x / (float)y, 0.1f,100.0f, matrix.projection);
-            if (regularShader.program){
-                glUseProgram(regularShader.program);
-                RMIUnifromMat4f(&regularShader,"projection",matrix.projection);
-            }
             //SDL_Log("New size:\nx=%d\ny=%d",width,height);
         }
     }
@@ -274,6 +295,24 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
             break;
         case SDLK_V:
             SDL_SetWindowRelativeMouseMode(window,false);
+            break;
+        case SDLK_N:
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+            break;
+        case SDLK_M:
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);    
+            break;
+        case SDLK_DOWN:
+            lightPosition[2] -= 1.0f;
+            break;
+        case SDLK_UP:
+            lightPosition[2] += 1.0f;
+            break;
+        case SDLK_RIGHT:
+            lightPosition[0] -= 1.0f;
+            break;
+        case SDLK_LEFT:
+            lightPosition[0] += 1.0f;
             break;
         default:
             break;
@@ -310,16 +349,24 @@ SDL_AppResult SDL_AppIterate(void *appstate)
 
     //  glm_vec2_print(moveDir,stdout);
 
-    RMICameraFloat(&camera,moveDir);
+    RMICameraFlight(&camera,moveDir);
+    glm_perspective(glm_rad(camera.fov),(float)width / (float)height, 0.1f,100.0f, matrix.projection);
+    glm_lookat(camera.position,camera.view,camera.up,matrix.view);
+
+    //party time!
+    /* lightColour [0] = (SDL_sin(SDL_GetTicks() / 128) + 1.0)/2.0;
+    lightColour [1] = (SDL_cos(SDL_GetTicks() / 64) + 1.0)/2.0;
+    lightColour [2] = (SDL_sin((SDL_GetTicks() + 20.0) / 128) + 1.0)/2.0; */
 
     glViewport(0,0,width,height);
     glClearColor(0.1f,0.1f,0.1f,1.0f);
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-    glm_lookat(camera.position,camera.view,camera.up,matrix.view);
-    RMIUnifromMat4f(&regularShader,"view",matrix.view);
-    glActiveTexture(GL_TEXTURE0); // SET HOUSE'S UNIT
     glUseProgram(regularShader.program);
+
+    RMIUniformMat4f(&regularShader,"projection",matrix.projection);
+    RMIUniformMat4f(&regularShader,"view",matrix.view);
+    glActiveTexture(GL_TEXTURE0); // SET HOUSE'S UNIT
     glBindTexture(GL_TEXTURE_2D,texture.ID);
 
     glBindVertexArray(VAO);
@@ -338,10 +385,51 @@ SDL_AppResult SDL_AppIterate(void *appstate)
         vec3 axis = {1.0f,0.3f,0.5f};
         glm_rotate(model,glm_rad(angle),axis);
 
-        RMIUnifromMat4f(&regularShader,"model",model);
+        RMIUniformMat4f(&regularShader,"model",model);
+
+        //distance to light
+        const float falloff = 25.0f;
+        float distance = glm_vec3_distance(lightPosition,cubePositions[i]);
+        
+        float lightAmount = glm_clamp((-distance/falloff) + 1.0f,0.0f,1.0f);
+
+        RMIUniformFloat(&regularShader,"lightAmount",lightAmount);
+        RMIUniformVec3(&regularShader,"lightColour",lightColour);
+
 
         glDrawArrays(GL_TRIANGLES, 0 , 36);
     }
+    glUseProgram(anotherShader.program);
+    mat4 model = {
+        {1.0f,0.0f,0.0f,0.0f},
+        {0.0f,1.0f,0.0f,0.0f},
+        {0.0f,0.0f,1.0f,0.0f},
+        {0.0f,0.0f,0.0f,1.0f}
+    };
+    glm_translate(model,lightPosition);
+    RMIUniformMat4f(&anotherShader,"model",model);
+    RMIUniformMat4f(&anotherShader,"projection",matrix.projection);
+    RMIUniformMat4f(&anotherShader,"view",matrix.view);
+    RMIUniformVec3(&anotherShader,"lightColor",lightColour);
+    glBindVertexArray(VAO2);
+    //glDrawArrays(GL_TRIANGLES, 0, 36);
+    glBindVertexArray(0);
+
+    glUseProgram(anotherShader.program);
+    mat4 model2 = {
+        {1.0f,0.0f,0.0f,0.0f},
+        {0.0f,1.0f,0.0f,0.0f},
+        {0.0f,0.0f,1.0f,0.0f},
+        {0.0f,0.0f,0.0f,1.0f}
+    };
+    glm_translate(model2,lightPosition);
+    vec3 scale = {0.025f,0.025f,0.025f};
+    glm_scale(model2,scale);
+    RMIUniformMat4f(&anotherShader,"model",model2);
+    RMIUniformMat4f(&anotherShader,"projection",matrix.projection);
+    RMIUniformMat4f(&anotherShader,"view",matrix.view);
+    glBindVertexArray(VAO3);
+    glDrawElements(GL_TRIANGLES, objCube.indexAmnt,GL_UNSIGNED_INT,0);
     glBindVertexArray(0);
 
     SDL_GL_SwapWindow(window);

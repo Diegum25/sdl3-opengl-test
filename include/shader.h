@@ -1,6 +1,7 @@
 #pragma once
 
 #include "cglm/cglm.h"
+#include "sceneMatrix.h"
 
 /* 
     What I want:
@@ -12,8 +13,9 @@ typedef struct{ // MAKE SURE TO ONLY INIT AFTER GLAD GETS SET UP!
     unsigned int program;
 } RMI_Shader;
 
-void RMIInitShader(RMI_Shader* shader);
+void RMIInitShader(RMI_Shader* shader, const char* vShader, const char* fShader, RMI_SceneMatrix* matrix); // matrix can be NULL if your shader doesnt have: (model, view & projection uniforms)
 
 void RMIUniformInt(RMI_Shader* shader, const char * uniform, int i);
-void RMIUnifromFloat(RMI_Shader* shader, const char * uniform, float f);
-void RMIUnifromMat4f(RMI_Shader* shader, const char * uniform, mat4 m4);
+void RMIUniformFloat(RMI_Shader* shader, const char * uniform, float f);
+void RMIUniformMat4f(RMI_Shader* shader, const char * uniform, mat4 m4);
+void RMIUniformVec3(RMI_Shader* shader, const char* unifrom, vec3 v3);
