@@ -25,6 +25,7 @@
 #include "shader.h"
 #include "texture.h"
 #include "camera.h"
+#include "obj.h"
 
 /*
  * This example code $WHAT_IT_DOES.
@@ -43,7 +44,7 @@ static SDL_Window *window = NULL;
 RMI_Shader regularShader, anotherShader;
 RMI_Texture texture;
 
-unsigned int VBO, VAO, VAO2;
+unsigned int VBO, VAO, VAO2, VBO3, VAO3, EBO3;
 
 int width = 640;
 int height = 480;
@@ -73,6 +74,8 @@ vec3 lightColour = {1.0f,1.0f,1.0f};
 
 RMI_Camera camera;
 RMI_SceneMatrix matrix;
+
+RMI_obj objCube;
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 {
@@ -165,6 +168,8 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
         -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
     };
 
+    loadOBJ(&objCube,"testing/teapot.obj");
+    //printf("%ld\n",sizeof(float)* objCube.vertsAmnt);
 
     // this has nothing to do with the VAO and can be used anywhere
 
@@ -203,8 +208,29 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     glEnableVertexAttribArray(0);
     glBindVertexArray(0);
 
+    glGenVertexArrays(1,&VAO3);
+    glGenBuffers(1,&VBO3);
+    glGenBuffers(1,&EBO3);
+
+    glBindVertexArray(VAO3);
+
+    glBindBuffer(GL_ARRAY_BUFFER,VBO3);
+    glBufferData(GL_ARRAY_BUFFER,sizeof(float) * objCube.vertsAmnt, objCube.verts,GL_STATIC_DRAW);
+
+    for (int i = 0 ; i < objCube.vertsAmnt; i++){
+        printf("v: %f\n",objCube.verts[i]);
+    }
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,EBO3);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * objCube.indexAmnt, objCube.indexes,GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE, 3 * sizeof(float),(void*)0);
+    glEnableVertexAttribArray(0);
+
+    glBindVertexArray(0);
+
     // uncomment this call to draw in wireframe polygons.
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
     //glEnable(GL_CULL_FACE); // Face normals are currently ass
 
@@ -375,11 +401,11 @@ SDL_AppResult SDL_AppIterate(void *appstate)
         glDrawArrays(GL_TRIANGLES, 0 , 36);
     }
     glUseProgram(anotherShader.program);
-        mat4 model = {
-            {1.0f,0.0f,0.0f,0.0f},
-            {0.0f,1.0f,0.0f,0.0f},
-            {0.0f,0.0f,1.0f,0.0f},
-            {0.0f,0.0f,0.0f,1.0f}
+    mat4 model = {
+        {1.0f,0.0f,0.0f,0.0f},
+        {0.0f,1.0f,0.0f,0.0f},
+        {0.0f,0.0f,1.0f,0.0f},
+        {0.0f,0.0f,0.0f,1.0f}
     };
     glm_translate(model,lightPosition);
     RMIUniformMat4f(&anotherShader,"model",model);
@@ -387,7 +413,24 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     RMIUniformMat4f(&anotherShader,"view",matrix.view);
     RMIUniformVec3(&anotherShader,"lightColor",lightColour);
     glBindVertexArray(VAO2);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
+    //glDrawArrays(GL_TRIANGLES, 0, 36);
+    glBindVertexArray(0);
+
+    glUseProgram(anotherShader.program);
+    mat4 model2 = {
+        {1.0f,0.0f,0.0f,0.0f},
+        {0.0f,1.0f,0.0f,0.0f},
+        {0.0f,0.0f,1.0f,0.0f},
+        {0.0f,0.0f,0.0f,1.0f}
+    };
+    glm_translate(model2,lightPosition);
+    vec3 scale = {0.025f,0.025f,0.025f};
+    glm_scale(model2,scale);
+    RMIUniformMat4f(&anotherShader,"model",model2);
+    RMIUniformMat4f(&anotherShader,"projection",matrix.projection);
+    RMIUniformMat4f(&anotherShader,"view",matrix.view);
+    glBindVertexArray(VAO3);
+    glDrawElements(GL_TRIANGLES, objCube.indexAmnt,GL_UNSIGNED_INT,0);
     glBindVertexArray(0);
 
     SDL_GL_SwapWindow(window);

@@ -4,6 +4,10 @@ layout (location = 1) in vec2 aTexPos;
 
 out vec2 TexPos;
 
+// I still dont know what gets interpolated to the fragment
+// idk if its the output or the input
+// im guessing its the input
+
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
