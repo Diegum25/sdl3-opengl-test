@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include "obj.h"
 
-void loadOBJ(RMI_obj* obj,const char* fileName){
+void RMILoadOBJ(RMI_obj* obj,const char* fileName){
     FILE* file = fopen(fileName,"r");
 
     if (!file){

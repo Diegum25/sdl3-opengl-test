@@ -8,4 +8,4 @@ typedef struct{
 } RMI_obj;
 
 
-void loadOBJ(RMI_obj* obj, const char* filename);
+void RMILoadOBJ(RMI_obj* obj, const char* filename);

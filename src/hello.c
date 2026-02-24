@@ -168,7 +168,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
         -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
     };
 
-    loadOBJ(&objCube,"testing/teapot.obj");
+    RMILoadOBJ(&objCube,"testing/teapot.obj");
     //printf("%ld\n",sizeof(float)* objCube.vertsAmnt);
 
     // this has nothing to do with the VAO and can be used anywhere
@@ -412,7 +412,7 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     RMIUniformMat4f(&anotherShader,"view",matrix.view);
     RMIUniformVec3(&anotherShader,"lightColor",lightColour);
     glBindVertexArray(VAO2);
-    //glDrawArrays(GL_TRIANGLES, 0, 36);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
     glBindVertexArray(0);
 
     glUseProgram(anotherShader.program);
@@ -422,9 +422,10 @@ SDL_AppResult SDL_AppIterate(void *appstate)
         {0.0f,0.0f,1.0f,0.0f},
         {0.0f,0.0f,0.0f,1.0f}
     };
-    glm_translate(model2,lightPosition);
     vec3 scale = {0.025f,0.025f,0.025f};
     glm_scale(model2,scale);
+    vec3 axis = {0.0f,1.0f,0.0f};
+    glm_rotate(model2,SDL_GetTicks() / 128.0f,axis);
     RMIUniformMat4f(&anotherShader,"model",model2);
     RMIUniformMat4f(&anotherShader,"projection",matrix.projection);
     RMIUniformMat4f(&anotherShader,"view",matrix.view);
