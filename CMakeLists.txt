@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(hello)
+project(rmi)
 
 # Output directories
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
@@ -21,20 +21,30 @@ target_include_directories(glad PUBLIC
 )
 
 # stb & self include
-include_directories(hello PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/stb/include ${CMAKE_CURRENT_SOURCE_DIR}/include)
+include_directories(rmi PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/stb/include ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # Executable
-add_executable(hello src/hello.c src/util.c src/sceneMatrix.c src/shader.c src/texture.c src/camera.c src/obj.c)
+add_executable(rmi
+    src/main.c
+    src/util.c
+    src/sceneMatrix.c
+    src/shader.c
+    src/texture.c
+    src/camera.c
+    src/obj.c
+    src/scene.c
+    src/list.c
+)
 
 # Windows subsystem flag
 if (WIN32)
-    set_target_properties(hello PROPERTIES WIN32_EXECUTABLE TRUE)
+    set_target_properties(rmi PROPERTIES WIN32_EXECUTABLE TRUE)
 endif()
 
 # Link libraries
-target_link_libraries(hello PRIVATE SDL3::SDL3 glad m cglm_headers)
+target_link_libraries(rmi PRIVATE SDL3::SDL3 glad m cglm_headers)
 
 # OpenGL
 if (WIN32)
-    target_link_libraries(hello PRIVATE opengl32)
+    target_link_libraries(rmi PRIVATE opengl32)
 endif()

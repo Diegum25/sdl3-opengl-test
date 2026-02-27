@@ -11,6 +11,6 @@ cmake --build build
 ## Run
 
 ```sh
-./build/hello
+./build/rmi
 ```
 

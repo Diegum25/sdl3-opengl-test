@@ -1,4 +1,4 @@
-# sdl3-opengl-test
+# RMI
 
 Building instructions at [BUILDING.md](BUILDING.md).
 
