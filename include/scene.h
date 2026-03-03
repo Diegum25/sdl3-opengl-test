@@ -10,5 +10,3 @@ typedef struct{
 } RMI_Scene;
 
 void RMIInitScene(RMI_Scene* scene, SDL_Window* window);
-
-void RMIPushIntoScene(void* thing);

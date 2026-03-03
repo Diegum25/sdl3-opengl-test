@@ -33,7 +33,7 @@ add_executable(rmi
     src/camera.c
     src/obj.c
     src/scene.c
-    src/list.c
+    src/graph.c
 )
 
 # Windows subsystem flag

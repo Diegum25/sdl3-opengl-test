@@ -27,7 +27,7 @@
 #include "camera.h"
 #include "obj.h"
 #include "scene.h"
-#include "list.h"
+#include "graph.h"
 
 /*
  * This example code $WHAT_IT_DOES.
@@ -82,8 +82,15 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     // stuff
     RMIInitScene(&scene,window);
 
-    RMI_list test;
-    RMIUtilPushIntoList(&test,(void*)&test);
+    RMI_Graph test;
+
+    float* funnyFloat = malloc(sizeof(float));
+
+    *funnyFloat = 69.69f;
+
+    RMIUtilAddToGraph(test.rootNode,funnyFloat,RMI_REPLACE);
+
+    SDL_Log("flaot: %f\n",*(float*)test.rootNode->data);
     
     // uncomment this call to draw in wireframe polygons.
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -172,8 +179,6 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     }
 
     glm_vec2_normalize(moveDir); // emulate circular analog stick
-
-    //  glm_vec2_print(moveDir,stdout);
 
     RMICameraFlight(&scene.camera,moveDir);
 
