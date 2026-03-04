@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(rmi)
+project(rmi C)
 
 # Output directories
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
