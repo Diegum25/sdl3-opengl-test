@@ -27,6 +27,7 @@
 #include "camera.h"
 #include "obj.h"
 #include "scene.h"
+#include "cpptest.h"
 
 /*
  * This example code $WHAT_IT_DOES.
@@ -80,6 +81,11 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 
     // stuff
     RMIInitScene(&scene,window);
+
+    TestClass* test = TestClass_Create();
+    int secretNumber = TestClass_GetCoolInt(test);
+
+    SDL_Log("Secret number: %d\n",secretNumber);
     
     // uncomment this call to draw in wireframe polygons.
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
