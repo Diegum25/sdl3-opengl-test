@@ -16,6 +16,14 @@ typedef struct Node Node;
 Node* Node_Create();
 void Node_AddChild(Node* node, Node* child);
 
+typedef struct PolymorphismInCWTF PolymorphismInCWTF;
+
+PolymorphismInCWTF* PolymorphismInCWTF_Create(void (*SDL_Log)(const char* fmt, ...),const char* text);
+void PolymorphismInCWTF_Activate(PolymorphismInCWTF* C);
+
+// general
+
+void Node_Activate_Children(Node* N);
 
 #ifdef __cplusplus
 }

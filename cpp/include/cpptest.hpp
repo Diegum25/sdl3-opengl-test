@@ -21,6 +21,7 @@ class Node{
 class PolymorphismInCWTF : public Node{
     public:
     const char* text;
-    PolymorphismInCWTF(const char* text);
+    void (*SDL_Log)(const char *fmt, ...);
+    PolymorphismInCWTF(void (*SDL_Log)(const char *fmt, ...),const char* text);
     virtual void Activate() override;
 };

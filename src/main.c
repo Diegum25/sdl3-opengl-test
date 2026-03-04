@@ -82,11 +82,15 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     // stuff
     RMIInitScene(&scene,window);
 
-    TestClass* test = TestClass_Create();
-    int secretNumber = TestClass_GetCoolInt(test);
-
-    SDL_Log("Secret number: %d\n",secretNumber);
+    Node* root = Node_Create();
+    Node_AddChild(root,(Node*)PolymorphismInCWTF_Create(&SDL_Log,"Hola1\n")); // gcc doenst gaf about it not being a Node* but msvc or whatever is called does.
+    Node_AddChild(root,(Node*)PolymorphismInCWTF_Create(&SDL_Log,"Hola2\n")); // gcc doenst gaf about it not being a Node* but msvc or whatever is called does.
+    Node_AddChild(root,(Node*)PolymorphismInCWTF_Create(&SDL_Log,"Hola3\n")); // gcc doenst gaf about it not being a Node* but msvc or whatever is called does.
+    Node_AddChild(root,(Node*)PolymorphismInCWTF_Create(&SDL_Log,"Hola4\n")); // gcc doenst gaf about it not being a Node* but msvc or whatever is called does.
+    Node_AddChild(root,(Node*)PolymorphismInCWTF_Create(&SDL_Log,"Hola5\n")); // gcc doenst gaf about it not being a Node* but msvc or whatever is called does.
     
+    Node_Activate_Children(root);
+
     // uncomment this call to draw in wireframe polygons.
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
