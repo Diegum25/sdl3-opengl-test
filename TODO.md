@@ -2,6 +2,7 @@
 
 ## Prio 1
 
+- [ ] Handle the model matrix transform at the Model class
 - [ ] Have the Model class determine the standard shader to use.
 - [ ] Make the Obj parser suck less
 - [ ] Quad support for the Obj class
