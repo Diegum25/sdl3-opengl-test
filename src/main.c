@@ -1,15 +1,3 @@
-/*
-  Copyright (C) 1997-2025 Sam Lantinga <slouken@libsdl.org>
-
-  This software is provided 'as-is', without any express or implied
-  warranty.  In no event will the authors be held liable for any damages
-  arising from the use of this software.
-
-  Permission is granted to anyone to use this software for any purpose,
-  including commercial applications, and to alter it and redistribute it
-  freely.
-*/
-
 #define SDL_MAIN_USE_CALLBACKS 1  /* use the callbacks instead of main() */
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
@@ -27,20 +15,10 @@
 #include "camera.h"
 #include "obj.h"
 #include "scene.h"
-#include "cpptest.h"
-
-/*
- * This example code $WHAT_IT_DOES.
- *
- * This code is public domain. Feel free to use it for any purpose!
- */
-
-
+#include "nodes.h"
 
 /* We will use this renderer to draw into this window every frame. */
 static SDL_Window *window = NULL;
-
-/* This function runs once at startup. */
 
 RMI_Scene scene;
 
@@ -82,14 +60,8 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     // stuff
     RMIInitScene(&scene,window);
 
-    Node* root = Node_Create();
-    Node_AddChild(root,(Node*)PolymorphismInCWTF_Create(&SDL_Log,"Hola1\n")); // gcc doenst gaf about it not being a Node* but msvc or whatever is called does.
-    Node_AddChild(root,(Node*)PolymorphismInCWTF_Create(&SDL_Log,"Hola2\n")); // gcc doenst gaf about it not being a Node* but msvc or whatever is called does.
-    Node_AddChild(root,(Node*)PolymorphismInCWTF_Create(&SDL_Log,"Hola3\n")); // gcc doenst gaf about it not being a Node* but msvc or whatever is called does.
-    Node_AddChild(root,(Node*)PolymorphismInCWTF_Create(&SDL_Log,"Hola4\n")); // gcc doenst gaf about it not being a Node* but msvc or whatever is called does.
-    Node_AddChild(root,(Node*)PolymorphismInCWTF_Create(&SDL_Log,"Hola5\n")); // gcc doenst gaf about it not being a Node* but msvc or whatever is called does.
-    
-    Node_Activate_Children(root);
+    // TEAPOT
+    Node_AddChild(scene.root,(Node*)Model_Create(&RMILoadOBJ,"testing/teapot.obj")); // the cpp lib cant find the definition of RMILoadOBJ
 
     // uncomment this call to draw in wireframe polygons.
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);

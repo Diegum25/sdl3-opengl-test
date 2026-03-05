@@ -24,7 +24,7 @@ target_include_directories(glad PUBLIC
 
 # cpp stuff
 add_library(rmi_cpp STATIC
-    cpp/src/cpptest.cpp
+    cpp/src/nodes.cpp
 )
 
 target_include_directories(rmi_cpp PUBLIC

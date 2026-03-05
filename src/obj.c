@@ -8,6 +8,8 @@ void RMILoadOBJ(RMI_obj* obj,const char* fileName){
 
     if (!file){
         fprintf(stderr,"Could not open %s\n",fileName);
+        fclose(file);
+        return;
     };
 
     int vCount = 0;

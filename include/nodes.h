@@ -1,4 +1,5 @@
 #pragma once
+#include "obj.h"
 
 // This is what C will see
 
@@ -24,6 +25,10 @@ void PolymorphismInCWTF_Activate(PolymorphismInCWTF* C);
 // general
 
 void Node_Activate_Children(Node* N);
+
+// model
+typedef struct Model Model;
+Model* Model_Create(void(*RMILoadOBJ)(RMI_obj*,const char*),const char* filename);
 
 #ifdef __cplusplus
 }
