@@ -1,5 +1,5 @@
 #include "cpptest.hpp"
-#include "cpptest.h"
+#include "../../include/cpptest.h"
 
 // Externs arent needed here apparently
 // This is all very convoluted and reminds me of half-life modding and having to modify 5 files to add a weapon.
