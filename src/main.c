@@ -13,7 +13,6 @@
 #include "shader.h"
 #include "texture.h"
 #include "camera.h"
-#include "obj.h"
 #include "scene.h"
 #include "nodes.h"
 
@@ -21,6 +20,7 @@
 static SDL_Window *window = NULL;
 
 RMI_Scene scene;
+RMI_Shader shader1;
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 {
@@ -43,7 +43,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER,1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,24);
 
-    window = SDL_CreateWindow("SDL3-OPENGL-TEST", 480, 480, SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL);
+    window = SDL_CreateWindow("SDL3-OPENGL-TEST", 640, 480, SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL);
 
     if (!window) {
         SDL_Log("Couldn't create window: %s", SDL_GetError());
@@ -53,6 +53,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     // OpenGL setup the graphics context
     SDL_GLContext context; // ?
     context = SDL_GL_CreateContext(window);
+    SDL_GL_MakeCurrent(window, context);
 
     // Setup our function pointers
     gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress); // weird thing <- ****** ai wrote this shit
@@ -61,7 +62,9 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     RMIInitScene(&scene,window);
 
     // TEAPOT
-    Node_AddChild(scene.root,(Node*)Model_Create(&RMILoadOBJ,"testing/teapot.obj")); // the cpp lib cant find the definition of RMILoadOBJ
+    Node_AddChild(scene.root,(Node*)Model_Create("testing/cube.obj")); // the cpp lib cant find the definition of RMILoadOBJ
+
+    RMIInitShader(&shader1,"testing/simpleVShader.glsl","testing/simpleFShader.glsl",&scene.matrix);
 
     // uncomment this call to draw in wireframe polygons.
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -159,14 +162,16 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     glm_perspective(glm_rad(scene.camera.fov),(float)x / (float)y, 0.1f,100.0f, scene.matrix.projection);
     glm_lookat(scene.camera.position,scene.camera.view,scene.camera.up,scene.matrix.view);
 
-    //party time!
-    /* lightColour [0] = (SDL_sin(SDL_GetTicks() / 128) + 1.0)/2.0;
-    lightColour [1] = (SDL_cos(SDL_GetTicks() / 64) + 1.0)/2.0;
-    lightColour [2] = (SDL_sin((SDL_GetTicks() + 20.0) / 128) + 1.0)/2.0; */
+    RMIUniformMat4f(&shader1,"view",scene.matrix.view);
+    RMIUniformMat4f(&shader1,"projection",scene.matrix.projection);
+
 
     glViewport(0,0,x,y);
     glClearColor(0.1f,0.1f,0.1f,1.0f);
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
+    glUseProgram(shader1.program);
+    Node_Activate_Children(scene.root);
 
     SDL_GL_SwapWindow(window);
     return SDL_APP_CONTINUE;  /* carry on with the program! */

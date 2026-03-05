@@ -25,6 +25,7 @@ target_include_directories(glad PUBLIC
 # cpp stuff
 add_library(rmi_cpp STATIC
     cpp/src/nodes.cpp
+    cpp/src/obj.cpp
 )
 
 target_include_directories(rmi_cpp PUBLIC
@@ -44,7 +45,6 @@ add_executable(rmi
     src/shader.c
     src/texture.c
     src/camera.c
-    src/obj.c
     src/scene.c
 )
 

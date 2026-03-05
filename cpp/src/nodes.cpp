@@ -1,3 +1,4 @@
+#include <iostream>
 #include "nodes.hpp"
 #include "nodes.h"
 
@@ -19,7 +20,7 @@ int TestClass_GetCoolInt(TestClass* C){
 // Node
 
 void Node::AddChild(Node* Child){
-    this->children.insert(this->children.end(),Child);
+    this->children.push_back(Child);
 }
 
 Node* Node_Create(){
@@ -59,16 +60,15 @@ void Node_Activate_Children(Node *N) {
 };
 
 // Model
-
-Model::Model(void(*RMILoadOBJ)(RMI_obj*,const char*),const char* filename)
+Model::Model(const char* filename)
 {
-    RMILoadOBJ(&this->obj,filename); // RMILoadOBJ isnt getting built for this so im just gonna pass a pointer this codebase is a mess already wtf
+    this->obj = new RMI_Obj(filename);
 
     glGenVertexArrays(1,&this->VAO);
     glGenBuffers(1,&this->VBO);
     glGenBuffers(1,&this->EBO);
 
-    if(this->obj.vertsAmnt == 0){
+    if(this->obj->verts.size() == 0){
         return;
     }
 
@@ -76,24 +76,40 @@ Model::Model(void(*RMILoadOBJ)(RMI_obj*,const char*),const char* filename)
     glBindBuffer(GL_ARRAY_BUFFER,this->VBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,this->EBO);
 
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * this->obj.vertsAmnt, this->obj.verts, GL_STATIC_DRAW);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * this->obj.indexAmnt, this->obj.indexes,GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * this->obj->verts.size(), this->obj->verts.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * this->obj->indexes.size(), this->obj->indexes.data(),GL_STATIC_DRAW);
 
     glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
     glBindVertexArray(0);
+
+/*     for (int i = 0; i < this->obj->verts.size();i++){
+        std::printf("%f\n",*(float*)(this->obj->verts.data() + i));
+    }
+
+    for (int i = 0; i < this->obj->indexes.size();i++){
+        std::printf("%u\n",*(unsigned int*)(this->obj->indexes.data() + i));
+    } */
 }
 
 Model::~Model()
 {
-    free(this->obj.verts);
-    free(this->obj.indexes);
+    //std::printf("hi :)\n");
+    delete this->obj; // can do this earlier
 
     glDeleteVertexArrays(1,&this->VAO);
     glDeleteBuffers(1,&this->VBO);
     glDeleteBuffers(1,&this->EBO);
 }
 
-Model *Model_Create(void(*RMILoadOBJ)(RMI_obj*,const char*),const char* filename)
+Model *Model_Create(const char* filename)
 {
-    return new Model(RMILoadOBJ,filename);
+    return new Model(filename);
+}
+
+void Model::Activate(){
+    glBindVertexArray(this->VAO);
+    glDrawElements(GL_TRIANGLES, this->obj->indexes.size(),GL_UNSIGNED_INT,0);
+    glBindVertexArray(0);
 }

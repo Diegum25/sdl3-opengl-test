@@ -1,8 +1,7 @@
 #pragma once
 #include <vector>
-#include "obj.h"
+#include "obj.hpp"
 #include "../../glad/include/glad/glad.h"
-#include <stdlib.h> // ?
 
 // Virtually all fields are private anyways. 
 // And there is no point to marking stuff as private.
@@ -31,11 +30,13 @@ class PolymorphismInCWTF : public Node{
 
 class Model : public Node{
     public:
-    RMI_obj obj;
-
     unsigned int VAO, VBO, EBO;
 
-    Model(void(*RMILoadOBJ)(RMI_obj*,const char*),const char* filename);
+    RMI_Obj* obj;
+
+    Model(const char* filename);
+
+    virtual void Activate() override;
 
     ~Model();
 };

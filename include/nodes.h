@@ -1,5 +1,4 @@
 #pragma once
-#include "obj.h"
 
 // This is what C will see
 
@@ -28,7 +27,7 @@ void Node_Activate_Children(Node* N);
 
 // model
 typedef struct Model Model;
-Model* Model_Create(void(*RMILoadOBJ)(RMI_obj*,const char*),const char* filename);
+Model* Model_Create(const char* filename);
 
 #ifdef __cplusplus
 }
