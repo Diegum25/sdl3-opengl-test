@@ -5,7 +5,9 @@
 - [ ] Have the Model class determine the standard shader to use.
 - [ ] Make the Obj parser suck less
 - [ ] Quad support for the Obj class
+- [ ] Get a better naming convention
 - [ ] Read more LearnOpenGL
+- [ ] Abstract more stuff
 
 ## Prio 2
 

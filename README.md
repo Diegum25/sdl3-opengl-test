@@ -2,6 +2,8 @@
 
 Building instructions at [BUILDING.md](BUILDING.md).
 
+TODO file at [TODO.md](TODO.md)
+
 Structs are defined as RMI_NameOfStruct
 
 And functions are defined as RMINameOfFunction()
