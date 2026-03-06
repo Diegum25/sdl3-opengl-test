@@ -1,8 +1,13 @@
 #pragma once
 
+#ifndef __cplusplus
+#include <cglm/cglm.h>
+#endif
+
 // This is what C will see
 
 #ifdef __cplusplus
+#include "../../cglm/include/cglm/cglm.h"
 extern "C"{
 #endif
 
@@ -28,6 +33,9 @@ void Node_Activate_Children(Node* N);
 // model
 typedef struct Model Model;
 Model* Model_Create(const char* filename);
+
+void Model_Scale(Model* M,float* scale);
+mat4* Model_Get_Transform(Model* M);
 
 #ifdef __cplusplus
 }

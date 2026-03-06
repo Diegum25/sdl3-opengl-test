@@ -1,4 +1,4 @@
-#include <iostream>
+#include "../../glad/include/glad/glad.h" // long ass route
 #include "nodes.hpp"
 #include "nodes.h"
 
@@ -112,4 +112,20 @@ void Model::Activate(){
     glBindVertexArray(this->VAO);
     glDrawElements(GL_TRIANGLES, this->obj->indexes.size(),GL_UNSIGNED_INT,0);
     glBindVertexArray(0);
+}
+
+void Model::setTransform(vec3 scale){
+    glm_scale(this->modelMatrix, scale);
+}
+
+void Model_Scale(Model* M,float *scale){
+    M->setTransform(scale);
+}
+
+mat4* Model::getTransform(){
+    return &this->modelMatrix;
+}
+
+mat4* Model_Get_Transform(Model *M){
+    return M->getTransform();
 }

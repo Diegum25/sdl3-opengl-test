@@ -30,6 +30,3 @@ RMI_Obj::RMI_Obj(const char * filename){
 
     file.close();
 }
-
-RMI_Obj::~RMI_Obj(){
-}

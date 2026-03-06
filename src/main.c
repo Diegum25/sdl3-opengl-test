@@ -2,16 +2,12 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 #include <glad/glad.h>
-#include "util.h"
 
 #define STB_IMAGE_IMPLEMENTATION // DONT PUT THIS ANYWHERE ELSE
 #include "stb_image.h"
 
-#include "cglm/cglm.h"
-
 #include "sceneMatrix.h"
 #include "shader.h"
-#include "texture.h"
 #include "camera.h"
 #include "scene.h"
 #include "nodes.h"
@@ -21,6 +17,8 @@ static SDL_Window *window = NULL;
 
 RMI_Scene scene;
 RMI_Shader shader1;
+
+Model* model;
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 {
@@ -61,8 +59,13 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     // stuff
     RMIInitScene(&scene,window);
 
+    model = Model_Create("testing/teapot.obj");
+
     // TEAPOT
-    Node_AddChild(scene.root,(Node*)Model_Create("testing/cube.obj")); // the cpp lib cant find the definition of RMILoadOBJ
+    Node_AddChild(scene.root,(Node*)model); // the cpp lib cant find the definition of RMILoadOBJ
+
+    vec3 scale = {0.05,0.05,0.05};
+    Model_Scale(model, scale);
 
     RMIInitShader(&shader1,"testing/simpleVShader.glsl","testing/simpleFShader.glsl",&scene.matrix);
 
@@ -162,6 +165,7 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     glm_perspective(glm_rad(scene.camera.fov),(float)x / (float)y, 0.1f,100.0f, scene.matrix.projection);
     glm_lookat(scene.camera.position,scene.camera.view,scene.camera.up,scene.matrix.view);
 
+    RMIUniformMat4f(&shader1, "model", (vec4*)Model_Get_Transform(model));
     RMIUniformMat4f(&shader1,"view",scene.matrix.view);
     RMIUniformMat4f(&shader1,"projection",scene.matrix.projection);
 

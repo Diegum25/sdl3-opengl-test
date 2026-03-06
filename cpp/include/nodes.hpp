@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include "obj.hpp"
-#include "../../glad/include/glad/glad.h"
+#include "../../cglm/include/cglm/cglm.h"
 
 // Virtually all fields are private anyways. 
 // And there is no point to marking stuff as private.
@@ -33,10 +33,20 @@ class Model : public Node{
     unsigned int VAO, VBO, EBO;
 
     RMI_Obj* obj;
+    mat4 modelMatrix = {
+        {1.0f,0.0f,0.0f,0.0f},
+        {0.0f,1.0f,0.0f,0.0f},
+        {0.0f,0.0f,1.0f,0.0f},
+        {0.0f,0.0f,0.0f,1.0f}
+    };
 
     Model(const char* filename);
 
     virtual void Activate() override;
+
+    void setTransform(vec3 scale);
+
+    mat4* getTransform();
 
     ~Model();
 };

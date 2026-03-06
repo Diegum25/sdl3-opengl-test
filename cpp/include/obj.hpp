@@ -7,5 +7,4 @@ class RMI_Obj{
     std::vector<unsigned int> indexes;
 
     RMI_Obj(const char* filename);
-    ~RMI_Obj();
 };
