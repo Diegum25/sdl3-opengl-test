@@ -10,15 +10,11 @@
 #include "shader.h"
 #include "camera.h"
 #include "scene.h"
-#include "nodes.h"
 
 /* We will use this renderer to draw into this window every frame. */
 static SDL_Window *window = NULL;
 
 RMI_Scene scene;
-RMI_Shader shader1;
-
-Model* model;
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 {
@@ -56,18 +52,14 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     // Setup our function pointers
     gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress); // weird thing <- ****** ai wrote this shit
 
+
+    *appstate = malloc(sizeof(int));
+    **(int**)appstate = 1;
+
+    printf("hi the appstate points to %d\n",**(int**)appstate);
+
     // stuff
     RMIInitScene(&scene,window);
-
-    model = Model_Create("testing/teapot.obj");
-
-    // TEAPOT
-    Node_AddChild(scene.root,(Node*)model); // the cpp lib cant find the definition of RMILoadOBJ
-
-    vec3 scale = {0.05,0.05,0.05};
-    Model_Scale(model, scale);
-
-    RMIInitShader(&shader1,"testing/simpleVShader.glsl","testing/simpleFShader.glsl",&scene.matrix);
 
     // uncomment this call to draw in wireframe polygons.
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -134,6 +126,7 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
 /* This function runs once per frame, and is the heart of the program. */
 SDL_AppResult SDL_AppIterate(void *appstate)
 {
+    printf("hi the appstate points to %d\n",*(int*)appstate);
     const bool* key_states = SDL_GetKeyboardState(NULL);
     const float speed = -0.1f;
     vec2 moveDir = {0.0f,0.0f};
@@ -165,17 +158,9 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     glm_perspective(glm_rad(scene.camera.fov),(float)x / (float)y, 0.1f,100.0f, scene.matrix.projection);
     glm_lookat(scene.camera.position,scene.camera.view,scene.camera.up,scene.matrix.view);
 
-    RMIUniformMat4f(&shader1, "model", (vec4*)Model_Get_Transform(model));
-    RMIUniformMat4f(&shader1,"view",scene.matrix.view);
-    RMIUniformMat4f(&shader1,"projection",scene.matrix.projection);
-
-
     glViewport(0,0,x,y);
     glClearColor(0.1f,0.1f,0.1f,1.0f);
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-
-    glUseProgram(shader1.program);
-    Node_Activate_Children(scene.root);
 
     SDL_GL_SwapWindow(window);
     return SDL_APP_CONTINUE;  /* carry on with the program! */
@@ -184,5 +169,5 @@ SDL_AppResult SDL_AppIterate(void *appstate)
 /* This function runs once at shutdown. */
 void SDL_AppQuit(void *appstate, SDL_AppResult result)
 {
-    /* SDL will clean up the window/renderer for us. */
+    free(appstate);
 }

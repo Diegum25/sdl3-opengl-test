@@ -8,8 +8,6 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 option(CGLM_SHARED "Shared build" OFF)
 option(CGLM_STATIC "Static build" ON)
 
-enable_language(CXX)
-
 # SDL3
 add_subdirectory(SDL EXCLUDE_FROM_ALL) # to build statically add {-DSDL_SHARED=False -DSDL_STATIC=True} to {cmake -S . -B build}
 
@@ -21,18 +19,6 @@ add_library(glad STATIC glad/src/glad.c)
 target_include_directories(glad PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/glad/include
 )
-
-# cpp stuff
-add_library(rmi_cpp STATIC
-    cpp/src/nodes.cpp
-    cpp/src/obj.cpp
-)
-
-target_include_directories(rmi_cpp PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/cpp/include
-)
-
-target_compile_features(rmi_cpp PUBLIC cxx_std_17)
 
 # stb & self include
 include_directories(rmi PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/stb/include ${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -55,7 +41,7 @@ endif()
 
 # Link libraries
 set_target_properties(rmi PROPERTIES LINKER_LANGUAGE C)
-target_link_libraries(rmi PRIVATE SDL3::SDL3 glad rmi_cpp m cglm_headers)
+target_link_libraries(rmi PRIVATE SDL3::SDL3 glad m cglm_headers)
 
 # OpenGL
 if (WIN32)

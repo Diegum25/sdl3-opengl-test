@@ -3,12 +3,10 @@
 #include "camera.h"
 #include "sceneMatrix.h"
 #include <SDL3/SDL.h>
-#include "nodes.h"
 
 typedef struct{
     RMI_Camera camera;
     RMI_SceneMatrix matrix;
-    Node* root;
 } RMI_Scene;
 
 void RMIInitScene(RMI_Scene* scene, SDL_Window* window);
