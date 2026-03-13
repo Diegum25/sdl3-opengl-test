@@ -17,14 +17,11 @@ add_subdirectory(cglm EXCLUDE_FROM_ALL)
 # glad
 add_library(glad STATIC glad/src/glad.c)
 target_include_directories(glad PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/glad/include
+    glad/include
 )
 
-# stb & self include
-include_directories(rmi PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/stb/include ${CMAKE_CURRENT_SOURCE_DIR}/include)
-
-# Executable
-add_executable(rmi
+# Libraruy
+add_library(rmi STATIC 
     src/main.c
     src/util.c
     src/sceneMatrix.c
@@ -34,16 +31,14 @@ add_executable(rmi
     src/scene.c
 )
 
-# Windows subsystem flag
-if (WIN32)
-    set_target_properties(rmi PROPERTIES WIN32_EXECUTABLE TRUE)
-endif()
+# stb & self include
+target_include_directories(rmi PUBLIC stb/include include)
 
 # Link libraries
 set_target_properties(rmi PROPERTIES LINKER_LANGUAGE C)
-target_link_libraries(rmi PRIVATE SDL3::SDL3 glad m cglm_headers)
+target_link_libraries(rmi PUBLIC SDL3::SDL3 glad m cglm_headers)
 
 # OpenGL
 if (WIN32)
-    target_link_libraries(rmi PRIVATE opengl32)
+    target_link_libraries(rmi PUBLIC opengl32)
 endif()
