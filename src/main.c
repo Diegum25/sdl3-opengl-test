@@ -3,6 +3,7 @@
 #include <SDL3/SDL_main.h>
 #include <glad/glad.h>
 
+// SDL ALSO COMES WITH STB_IMAGE BUT IDK HOW TO USE IT
 #define STB_IMAGE_IMPLEMENTATION // DONT PUT THIS ANYWHERE ELSE
 #include "stb_image.h"
 
@@ -10,9 +11,11 @@
 #include "shader.h"
 #include "camera.h"
 #include "scene.h"
+#include "test.h"
 
 /* We will use this renderer to draw into this window every frame. */
 static SDL_Window *window = NULL;
+static void* RMIAppState = NULL; // sdl does this the same way: https://github.com/libsdl-org/SDL/blob/main/src/main/SDL_main_callbacks.c
 
 RMI_Scene scene;
 
@@ -56,7 +59,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     *appstate = malloc(sizeof(int));
     **(int**)appstate = 1;
 
-    printf("hi the appstate points to %d\n",**(int**)appstate);
+    SDL_Log("hi the SDL appstate points to %d\n",**(int**)appstate);
 
     // stuff
     RMIInitScene(&scene,window);
@@ -69,6 +72,8 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     glCullFace(GL_BACK);
 
     glEnable(GL_DEPTH_TEST);
+
+    RMI_Init(&RMIAppState);
 
     return SDL_APP_CONTINUE;  /* carry on with the program! */
 }
@@ -126,7 +131,7 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
 /* This function runs once per frame, and is the heart of the program. */
 SDL_AppResult SDL_AppIterate(void *appstate)
 {
-    printf("hi the appstate points to %d\n",*(int*)appstate);
+    //printf("hi the appstate points to %d\n",*(int*)appstate);
     const bool* key_states = SDL_GetKeyboardState(NULL);
     const float speed = -0.1f;
     vec2 moveDir = {0.0f,0.0f};
@@ -161,6 +166,8 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     glViewport(0,0,x,y);
     glClearColor(0.1f,0.1f,0.1f,1.0f);
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
+    RMI_Update(RMIAppState);
 
     SDL_GL_SwapWindow(window);
     return SDL_APP_CONTINUE;  /* carry on with the program! */

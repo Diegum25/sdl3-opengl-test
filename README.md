@@ -14,6 +14,6 @@ idk
 
 [**SDL**](https://github.com/libsdl-org/SDL) - Zlib license
 
-[**cglm**](https://github.com/recp/cglm/) - [MIT license](cglm/LICENSE)
+[**cglm**](https://github.com/recp/cglm/) - [MIT license](https://raw.githubusercontent.com/recp/cglm/refs/heads/master/LICENSE)
 
 **[stb](https://github.com/nothings/stb/)** - Public Domain
