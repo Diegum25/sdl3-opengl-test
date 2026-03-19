@@ -1,3 +1,6 @@
+#define RMI_MAIN
+#include "rmi_main.h"
+
 #include "SDL3/SDL.h"
 #include "test.h"
 #include "stdlib.h"

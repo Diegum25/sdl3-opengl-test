@@ -17,4 +17,5 @@ target_link_libraries(test PUBLIC rmi)
 
 if (WIN32)
     set_target_properties(test PROPERTIES WIN32_EXECUTABLE TRUE)
+    #target_compile_definitions(test PUBLIC SDL_PLATFORM_WIN32)
 endif()
