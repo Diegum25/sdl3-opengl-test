@@ -1,6 +1,8 @@
 # TODOs
 
 - [x] Separate the stuff into its own library
+- [x] Idk what im doing
+- [ ] Figure out why is it not compiling on bindows
 - [ ] Figure out how to use the stb_image.h that sdl already comes with
 - [ ] Redo [BUILDING.md](BUILDING.md) from the point of view of rmi being another Submodule
 - [ ] Learn how to do a callback system and make that stuff easy to use
