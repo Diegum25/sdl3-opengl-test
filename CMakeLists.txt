@@ -31,6 +31,7 @@ add_library(rmi STATIC
     src/texture.c
     src/camera.c
     src/scene.c
+    src/obj.c
 )
 
 # stb & self include

@@ -4,6 +4,8 @@
 - [x] Idk what im doing
 - [X] Figure out why is it not compiling on bindows
 - [?] Learn how to do a callback system and make that stuff easy to use
+- [ ] Stop using pragma once lol
+- [ ] Memory pool?
 - [ ] Figure out how to not include everything by including rmi_main.h
 - [ ] Figure out how to use the stb_image.h that sdl already comes with
 - [ ] Link SDL dynamically again
