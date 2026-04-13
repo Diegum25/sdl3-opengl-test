@@ -3,10 +3,8 @@
 
 #include "RMI/rmi.h"
 
-RMI_Camera camera;
-
 void RMI_Init(void** appstate){
-    RMIInitCamera(&camera);
+    
 }
 
 void RMI_Update(void* appstate){
@@ -14,5 +12,5 @@ void RMI_Update(void* appstate){
 }
 
 void RMI_End(void *appstate){
-
+    
 }

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef RMI_UNTIL_INTERNAL_H
+#define RMI_UNTIL_INTERNAL_H
 
 // old stuff
 
@@ -10,3 +11,4 @@
 bool RMIUtilCheckShader(unsigned int shader);
 
 unsigned int RMIUtilCreateFullShader(GLenum type, const char* fileName); // it already deletes the shader if it fails.
+#endif

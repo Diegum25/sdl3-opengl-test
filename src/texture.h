@@ -1,4 +1,5 @@
-#pragma once
+#ifndef RMI_TEXTURE_INTERNAL_H
+#define RMI_TEXTURE_INTERNAL_H
 #include "glad/glad.h"
 
 /* 
@@ -18,3 +19,4 @@ typedef struct{
 } RMI_TextureParameters; */
 
 void RMIInitTexture(RMI_Texture*,const char *);
+#endif

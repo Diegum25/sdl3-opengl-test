@@ -11,7 +11,7 @@
         #define STB_IMAGE_IMPLEMENTATION // DONT PUT THIS ANYWHERE ELSE
         #include "stb_image.h"
         
-        #include "test.h"
+        #include "RMI_callbacks.h"
 
         /* We will use this renderer to draw into this window every frame. */
         static SDL_Window *window = NULL;

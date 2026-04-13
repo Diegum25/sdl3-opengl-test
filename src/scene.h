@@ -1,4 +1,5 @@
-#pragma once
+#ifndef RMI_SCENE_INTERNAL_H
+#define RMI_SCENE_INTERNAL_H
 
 #include "camera.h"
 #include "sceneMatrix.h"
@@ -10,3 +11,4 @@ typedef struct{
 } RMI_Scene;
 
 void RMIInitScene(RMI_Scene* scene, SDL_Window* window);
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef RMI_CAMERA_INTERNAL_H
+#define RMI_CAMERA_INTERNAL_H
 #include "cglm/cglm.h"
 
 typedef struct {
@@ -17,3 +18,4 @@ void RMIInitCamera(RMI_Camera *camera);
 void RMICameraFlight(RMI_Camera* camera, vec2 movementVec);
 
 void RMICameraFloat(RMI_Camera* camera, vec2 movementVec); // we all float (pennywise booty cheeks)
+#endif
