@@ -35,7 +35,7 @@ add_library(rmi STATIC
 )
 
 # stb & self include
-target_include_directories(rmi PUBLIC stb/include include)
+target_include_directories(rmi PUBLIC include stb/include PRIVATE src/ )
 
 # Link libraries
 set_target_properties(rmi PROPERTIES LINKER_LANGUAGE C)
