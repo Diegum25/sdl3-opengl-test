@@ -3,3 +3,4 @@ build/
 .vscode/
 tests/build/
 tests/windows/
+tests/win/

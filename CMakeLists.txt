@@ -23,7 +23,7 @@ target_include_directories(glad PUBLIC
 )
 
 # Libraruy
-add_library(rmi STATIC 
+add_library(rmi OBJECT # winmain not defined fix
     src/main.c
     src/util.c
     src/sceneMatrix.c
@@ -39,9 +39,11 @@ target_include_directories(rmi PUBLIC include stb/include PRIVATE src/ )
 
 # Link libraries
 set_target_properties(rmi PROPERTIES LINKER_LANGUAGE C)
-target_link_libraries(rmi PUBLIC SDL3::SDL3 glad m cglm_headers)
 
 # OpenGL
 if (WIN32)
     target_link_libraries(rmi PUBLIC opengl32)
+    target_link_libraries(rmi PRIVATE --static SDL3::SDL3 cglm_headers glad m)
+else()
+    target_link_libraries(rmi PRIVATE SDL3::SDL3 cglm_headers glad m)
 endif()
