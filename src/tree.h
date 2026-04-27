@@ -1,15 +1,15 @@
 #ifndef RMI_SCENE_TREE_INTERNAL_H
 #define RMI_SCENE_TREE_INTERNAL_H
 
-#define RMI_TREE_POOL_SIZE 2048 // same as hl
+// nvm i dont think this is possible with static memory
 
-typedef struct treeNode_s{
-    unsigned int parentID;
-    unsigned int* childrenID;
-} RMI_TreeNode;
+// but i found out that you can downcast stuff setup like this
+typedef struct SNode{
+    // base stuff
+} RMI_Node;
 
-typedef struct tree_s{ // no scene only tree
-    RMI_TreeNode pool[RMI_TREE_POOL_SIZE]; // malloc also has to find a slot dealwidit
-} RMI_Tree;
+typedef struct SAnotherNode{
+    RMI_Node super;
+} RMI_AnotherNode;
 
 #endif

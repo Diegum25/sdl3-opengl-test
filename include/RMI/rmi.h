@@ -6,8 +6,6 @@
 
 // I will later set these headers up differently
 
-#include "RMI_obj.h"
-#include "RMI_camera.h"
 #include "RMI_callbacks.h"
 
 #endif
