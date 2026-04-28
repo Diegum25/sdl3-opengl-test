@@ -27,6 +27,7 @@ add_library(rmi OBJECT # winmain not defined fix
     src/main.c
     src/tree.c
     src/node_base.c
+    src/globals.c
 )
 
 # stb & self include

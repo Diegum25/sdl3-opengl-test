@@ -7,7 +7,7 @@
 
 // but i found out that you can downcast stuff setup like this
 struct SNode{
-    struct SNode* children;
+    struct SNode** children;
 };
 
 #endif

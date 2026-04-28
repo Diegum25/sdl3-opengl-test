@@ -6,6 +6,6 @@ typedef struct SGlobals{
     RMI_Node* p_root;
 } RMI_Globals;
 
-static RMI_Globals g_globals;
+RMI_Globals* RMIGetGlobals();
 
 #endif

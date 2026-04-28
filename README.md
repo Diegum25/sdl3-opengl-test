@@ -4,7 +4,7 @@ Building instructions at [BUILDING.md](BUILDING.md).
 
 TODO file at [TODO.md](TODO.md)
 
-Structs are defined as RMI_NameOfStruct
+Structs are defined as SNameOfStruct, typedefs are RMI_NameOfType
 
 And functions are defined as RMINameOfFunction()
 

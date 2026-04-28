@@ -59,7 +59,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 
     glEnable(GL_DEPTH_TEST);
 
-    g_globals.p_root = RMICreateNodeBase();
+    RMIGetGlobals()->p_root = RMICreateNodeBase();
 
     RMI_Init(&RMIAppState);
 
