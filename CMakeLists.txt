@@ -25,13 +25,6 @@ target_include_directories(glad PUBLIC
 # Libraruy
 add_library(rmi OBJECT # winmain not defined fix
     src/main.c
-    src/util.c
-    src/sceneMatrix.c
-    src/shader.c
-    src/texture.c
-    src/camera.c
-    src/scene.c
-    src/obj.c
 )
 
 # stb & self include

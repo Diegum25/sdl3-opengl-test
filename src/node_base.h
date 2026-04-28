@@ -5,11 +5,13 @@
 
 // but i found out that you can downcast stuff setup like this
 typedef struct SNode{
-    // base stuff
+    struct SNode* children;
 } RMI_Node;
 
 typedef struct SAnotherNode{
     RMI_Node super;
 } RMI_AnotherNode;
+
+void RMINodeAppend(RMI_Node*,RMI_Node*);
 
 #endif

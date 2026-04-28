@@ -1,0 +1,6 @@
+build/
+.cache/
+.vscode/
+tests/build/
+tests/windows/
+tests/win/
