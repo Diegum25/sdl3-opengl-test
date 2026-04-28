@@ -25,6 +25,8 @@ target_include_directories(glad PUBLIC
 # Libraruy
 add_library(rmi OBJECT # winmain not defined fix
     src/main.c
+    src/tree.c
+    src/node_base.c
 )
 
 # stb & self include

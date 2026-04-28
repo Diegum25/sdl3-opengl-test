@@ -7,5 +7,7 @@
 // I will later set these headers up differently
 
 #include "RMI_callbacks.h"
+#include "RMI_nodes.h"
+#include "RMI_tree.h"
 
 #endif

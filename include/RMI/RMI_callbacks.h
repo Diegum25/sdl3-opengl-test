@@ -1,5 +1,5 @@
-#ifndef RMI_CALLBACKS_H
-#define RMI_CALLBACKS_H
+#ifndef RMI_P_CALLBACKS_H
+#define RMI_P_CALLBACKS_H
 
 void RMI_Init(void** RMIAppState);
 void RMI_Update(void* RMIAppState);
