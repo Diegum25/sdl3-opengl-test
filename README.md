@@ -16,6 +16,7 @@ or `x11-nvidia.sh`, `wayland-nvidia.sh` if youre using an nvidia one.
 
 > [!IMPORTANT]  
 > For the X containers you're gonna need xorg-host
+>
 > For the nvidia containers you're gonna need to run `sudo nvidia-ctk runtime configure --runtime=docker`
 
 # Container issues
