@@ -8,11 +8,18 @@ And functions are defined as RMINameOfFunction()
 
 idk
 
+## Build containers
+
+`build.sh`
+
 ## Run containers
 
 `x11.sh`, `wayland.sh` if youre using a normal gpu.
 
 or `x11-nvidia.sh`, `wayland-nvidia.sh` if youre using an nvidia one.
+
+> [!NOTE]  
+> You can run both if you're on a wayland session.
 
 > [!IMPORTANT]  
 > For the X containers you're gonna need xorg-host
