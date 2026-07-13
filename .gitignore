@@ -1,6 +1,5 @@
 build/
 .cache/
 .vscode/
-tests/build/
-tests/windows/
-tests/win/
+compile_commands.json
+tests/build

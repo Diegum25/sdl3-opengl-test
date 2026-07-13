@@ -1,11 +1,5 @@
-#ifndef RMI_GLOBALS_H
-#define RMI_GLOBALS_H
+typedef struct {
+    int test;
+}RMI_Globals;
 
-#include "RMI/RMI_nodes.h"
-typedef struct SGlobals{
-    RMI_Node* p_root;
-} RMI_Globals;
-
-RMI_Globals* RMIGetGlobals();
-
-#endif
+RMI_Globals* RMI_GetGlobals();
