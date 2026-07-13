@@ -1,5 +1,6 @@
 #include "SDL3/SDL.h"
 #include "globals.h"
+#include "glad/gl.h"
 
 bool RMI_Init(unsigned int x, unsigned int y){
 
