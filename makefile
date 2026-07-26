@@ -1,11 +1,15 @@
-#!hi lol
+#!/usr/sbin/make
 
 RMIFILES = src/init.c \
-	   src/globals.c
+	   src/globals.c \
+	   src/log.c \
+	   src/run.c
 
 OTHERFILES = build/glad/src/gl.c
 
-BUILD = gcc -Icglm/include -Ibuild/glad/include -Isrc -lSDL3 -L./build/cglm -l:libcglm.a -shared -fPIC $(RMIFILES) ${OTHERFILES} -obuild/librmi.so 
+CFLAGS = -Wall -Icglm/include -Ibuild/glad/include -Iinclude -Isrc -lSDL3 -L./build/cglm -l:libcglm.a -shared -fPIC
+
+BUILD = gcc $(CFLAGS) $(RMIFILES) $(OTHERFILES) -obuild/librmi.so 
 
 all: rmi
 

@@ -1,5 +1,18 @@
+#ifndef RMI_GLOBALS_H
+#define RMI_GLOBALS_H
+
+#include <SDL3/SDL_stdinc.h>
+
 typedef struct {
-    int test;
+    Uint16 width;
+    Uint16 height;
+    bool iWantToKeepRunning;
+    Uint16 framerate;
+    void (*eventHandler)();
+    void (*updateHandler)();
+    void (*drawHandler)();
 }RMI_Globals;
 
-RMI_Globals* RMI_GetGlobals();
+volatile RMI_Globals* RMI_GetGlobals();
+
+#endif

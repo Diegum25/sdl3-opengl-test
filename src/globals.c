@@ -1,7 +1,7 @@
 #include "globals.h"
 
-RMI_Globals globals;
+volatile RMI_Globals globals = {0};
 
-RMI_Globals* RMI_GetGlobals(){
+volatile RMI_Globals* RMI_GetGlobals(){
     return &globals;
 };

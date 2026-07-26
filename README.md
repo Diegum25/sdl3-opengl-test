@@ -2,12 +2,12 @@
 
 my engine
 
-## prerequisites
+## Building requirements
+* GCC & CMake
 * SDL3
 * Python
-* Internet
 
-## build
-```
+## Build
+```sh
 make
 ```

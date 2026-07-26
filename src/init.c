@@ -1,13 +1,32 @@
-#include "SDL3/SDL.h"
+#include "RMI/rmi.h"
 #include "globals.h"
-#include "glad/gl.h"
+#include <SDL3/SDL_init.h>
+#include <stdbool.h>
 
-bool RMI_Init(unsigned int x, unsigned int y){
+RMI_Result RMI_Init(Uint16 x, Uint16 y, Uint16 fps, void(*event), void(*update), void(*draw)){
 
-    RMI_Globals* globals = RMI_GetGlobals();
+    volatile RMI_Globals* globals = RMI_GetGlobals();
 
-    globals->test = 1111111;
+    globals->width = x;
+    globals->height = y;
 
-    SDL_Log("Global test: %d",globals->test);
-    return true;
+    globals->eventHandler = event;
+    globals->updateHandler = update;
+    globals->drawHandler = draw;
+
+    globals->framerate = fps;
+
+    if(!SDL_Init(SDL_INIT_VIDEO)) return RMI_RESULT_FAILURE;
+
+    globals->iWantToKeepRunning = true;
+
+    return RMI_RESULT_SUCCESS;
 }
+
+RMI_Result RMI_Deinit(){
+    volatile RMI_Globals* glabas = RMI_GetGlobals();
+    glabas->iWantToKeepRunning = false;
+    
+    SDL_Quit();
+    return RMI_RESULT_SUCCESS; // :P
+};
