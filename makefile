@@ -1,4 +1,4 @@
-#!/usr/sbin/make
+#!/usr/bin/make
 
 RMIFILES = src/init.c \
 	   src/globals.c \

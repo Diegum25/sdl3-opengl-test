@@ -1,11 +1,11 @@
 # RMI
 
-my engine
+my engine making framework
 
 ## Building requirements
 * GCC & CMake
-* SDL3
-* Python
+* SDL3 (newest version preferably)
+* Python3
 
 ## Build
 ```sh
