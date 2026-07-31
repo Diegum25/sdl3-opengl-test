@@ -2,7 +2,7 @@
 
 TESTFILES = src/main.c
 
-CFLAGS = -Wall -I../include -Iinclude -lSDL3 -L../build -Wl,-rpath,'$$ORIGIN' -lrmi
+CFLAGS = -Wall -I../include -I../build/glad/include -Iinclude -lSDL3 -L../build -Wl,-rpath,'$$ORIGIN' -lrmi
 
 all: build
 

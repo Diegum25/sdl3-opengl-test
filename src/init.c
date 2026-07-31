@@ -9,7 +9,7 @@
 #define STB_IMAGE_IMPLEMENTATION // DONT PUT THIS ANYWHERE ELSE
 #include "stb_image.h"
 
-RMI_Result RMI_Init(Uint16 x, Uint16 y, void(*event), void(*update), void(*draw)){
+RMI_Result RMI_Init(Uint16 x, Uint16 y, void(*event)(SDL_Event* event), void(*update), void(*draw)){
 
     stbi_set_flip_vertically_on_load_thread(true);
 
