@@ -1,6 +1,6 @@
-[submodule "SDL"]
-	path = SDL
-	url = https://github.com/libsdl-org/SDL.git
 [submodule "cglm"]
 	path = cglm
 	url = https://github.com/recp/cglm.git
+[submodule "glad"]
+	path = glad
+	url = https://github.com/Dav1dde/glad.git
