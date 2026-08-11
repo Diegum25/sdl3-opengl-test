@@ -6,13 +6,7 @@
 #include <SDL3/SDL_surface.h>
 #include <SDL3/SDL_video.h>
 
-#define STB_IMAGE_IMPLEMENTATION // DONT PUT THIS ANYWHERE ELSE
-#include "stb_image.h"
-
 RMI_Result RMI_Init(Uint16 x, Uint16 y, void(*event)(SDL_Event* event), void(*update), void(*draw)){
-
-    stbi_set_flip_vertically_on_load_thread(true);
-
     volatile RMI_Globals* globals = RMI_GetGlobals();
 
     RMI_R_SetupGlobals(globals);

@@ -7,7 +7,7 @@ RMIFILES = src/init.c \
 
 OTHERFILES = build/glad/src/gl.c
 
-CFLAGS = -Wall -Icglm/include -Ibuild/glad/include -Iinclude -Isrc -lSDL3 -L./build/cglm -l:libcglm.a -shared -fPIC
+CFLAGS = -Wall -Icglm/include -I$(GLADOUTDIR)/include -Iinclude -Isrc -lSDL3 -L$(CGLMOUTDIR) -l:libcglm.a -shared -fPIC
 
 BUILD = gcc $(CFLAGS) $(RMIFILES) $(OTHERFILES) -o$(RMI)
 
@@ -28,7 +28,7 @@ $(CGLM): cglm/src
 	cmake -S cglm/ -B $(CGLMOUTDIR) -DCGLM_SHARED=OFF -DCGLM_STATIC=ON
 	cmake --build $(CGLMOUTDIR)
 
-$(RMI): $(RMIFILES) $(GLAD) $(CGLM)
+$(RMI): $(RMIFILES) $(GLAD) $(CGLM) Makefile
 	$(BUILD)
 
 clean:

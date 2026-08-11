@@ -1,4 +1,4 @@
-# RMI
+# RMI (Roll Me In)
 
 my engine making framework
 
