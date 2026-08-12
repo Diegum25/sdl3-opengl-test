@@ -21,7 +21,7 @@ int RMI_I_Update(void* data){ // This one has to wait tickrate delta time
     const Uint64 tickPaceNS = tickPace * 1000000000;
     while(r_globals->running){
         SDL_DelayPrecise(tickPaceNS); // this aproach kinda sucks
-        SDL_PumpEvents();
+        SDL_PumpEvents(); // how bad could it be to call it here
         int eventsGot = SDL_PeepEvents(events, 32, SDL_GETEVENT, SDL_EVENT_FIRST, SDL_EVENT_LAST);
         if(eventsGot != -1){
             for(Uint16 i = 0; i < eventsGot; i++){
@@ -37,7 +37,6 @@ void RMI_I_Draw(){ // This one for framerate delta time
     const Uint64 framePaceNS = (r_globals->framePace) * 1000000000;
     while(r_globals->running){
         SDL_DelayPrecise(framePaceNS); // this aproach kinda sucks
-        glViewport(0,0,r_globals->width,r_globals->height);
         r_globals->drawHandler();
         SDL_GL_SwapWindow(r_globals->window);
     }

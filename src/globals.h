@@ -19,6 +19,7 @@ typedef struct {
 volatile RMI_Globals* RMI_GetGlobals();
 
 void RMI_R_SetupGlobals(volatile RMI_Globals* ptr);
+void RMI_W_SetupGlobals(volatile RMI_Globals* ptr);
 
 
 #endif

@@ -1,8 +1,6 @@
 # RMI (Roll Me In)
 
-my engine making framework
-
-its actually more like a weird sdl wrapper
+my weird multithreaded sdl wrapper
 
 still wip fuck off
 

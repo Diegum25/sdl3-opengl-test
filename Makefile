@@ -3,7 +3,8 @@
 RMIFILES = src/init.c \
 	   src/globals.c \
 	   src/log.c \
-	   src/run.c
+	   src/run.c \
+	   src/window.c
 
 OTHERFILES = build/glad/src/gl.c
 
@@ -15,14 +16,17 @@ RMI = build/librmi.so
 GLADOUTDIR = build/glad
 GLAD = $(GLADOUTDIR)/include/glad/gl.h
 
-.PHONY: all clean
+.PHONY: all clean force
 
 all: $(RMI)
 
 $(GLAD): glad/glad
 	PYTHONPATH=glad python -m glad --api gl:compatibility=4.6 --out-path $(GLADOUTDIR) --reproducible
 
-$(RMI): $(RMIFILES) $(GLAD) Makefile
+$(RMI): $(RMIFILES) $(GLAD)
+	$(BUILD)
+
+force: $(RMIFILES) $(GLAD)
 	$(BUILD)
 
 clean:

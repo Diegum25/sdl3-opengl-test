@@ -10,6 +10,7 @@ RMI_Result RMI_Init(Uint16 x, Uint16 y, void(*event)(SDL_Event* event), void(*up
     volatile RMI_Globals* globals = RMI_GetGlobals();
 
     RMI_R_SetupGlobals(globals);
+    RMI_W_SetupGlobals(globals);
 
     SDL_SetAppMetadata("Example HUMAN READABLE NAME", "1.0", "com.example.CATEGORY-NAME");
     if(!SDL_Init(SDL_INIT_VIDEO)) return RMI_RESULT_FAILURE;
@@ -48,22 +49,6 @@ RMI_Result RMI_Init(Uint16 x, Uint16 y, void(*event)(SDL_Event* event), void(*up
     context = SDL_GL_CreateContext(globals->window);
     SDL_GL_MakeCurrent(globals->window, context);
     gladLoadGL((SDL_GL_GetProcAddress));
-
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-    glEnable(GL_CULL_FACE); // Face normals are currently ass
-
-    glCullFace(GL_BACK);
-
-    glEnable(GL_DEPTH_TEST);
-
-    // first frame
-
-    glViewport(0,0,x,y);
-    glClearColor(0.1f,0.1f,0.1f,1.0f);
-    glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-
-    SDL_GL_SwapWindow(globals->window);
 
     return RMI_RESULT_SUCCESS;
 }
