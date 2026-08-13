@@ -8,7 +8,7 @@ RMIFILES = src/init.c \
 
 OTHERFILES = build/glad/src/gl.c
 
-CFLAGS = -Wall -I$(GLADOUTDIR)/include -Iinclude -Isrc -lSDL3 -shared -fPIC
+CFLAGS = -Wall -O3 -s -I$(GLADOUTDIR)/include -Iinclude -Isrc -lSDL3 -shared -fPIC
 
 BUILD = gcc $(CFLAGS) $(RMIFILES) $(OTHERFILES) -o$(RMI)
 

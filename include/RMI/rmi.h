@@ -16,6 +16,7 @@ extern RMI_Result RMI_Run();
 extern RMI_Result RMI_Stop();
 
 extern RMI_Result RMI_GetWindowSizeInPixels(int* w, int* h);
+extern RMI_Result RMI_SetWindowRelativeMouseMode(bool enabled);
 
 extern void RMI_Log(SDL_PRINTF_FORMAT_STRING const char *fmt, ...);
 
