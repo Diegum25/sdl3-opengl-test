@@ -30,7 +30,7 @@ int RMI_I_Update(void* data){ // This is not on the main thread
 };
 
 void RMI_I_Draw(){ // This is on the main thread
-    const Uint64 framePaceNS = (r_globals->framePace) * 1000000000;// this aproach kinda sucks
+    const Uint64 framePaceNS = (r_globals->framePace) * 1000000000;
     SDL_Event* events = SDL_calloc(sizeof(SDL_Event), 32);
     while(r_globals->running){
         Uint64 start = SDL_GetTicksNS();
