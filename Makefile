@@ -22,7 +22,7 @@ GLAD = $(GLADOUTDIR)/include/glad/gl.h
 all: $(RMI)
 
 build/libglad.so: $(OTHERFILES) $(GLAD)
-	gcc -I$(GLADOUTDIR)/include -shared -fPIC $(OTHERFILES) -obuild/libglad.so
+	gcc -Wall -O3 -s -I$(GLADOUTDIR)/include -shared -fPIC $(OTHERFILES) -obuild/libglad.so
 
 $(GLAD): glad/glad
 	PYTHONPATH=glad python -m glad --api gl:compatibility=4.6 --out-path $(GLADOUTDIR) --reproducible
