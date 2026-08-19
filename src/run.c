@@ -25,7 +25,6 @@ int RMI_I_Update(void* data){ // This is not on the main thread
 
         if (elapsed < tickPaceNS){
             SDL_DelayPrecise(tickPaceNS - elapsed);
-            SDL_Log("[UPDATE] slept %lu ns\n",tickPaceNS - elapsed);
         }
         else SDL_Log("[UPDATE] did not sleep\n"); // this approach kinda slaps
     }
@@ -54,7 +53,6 @@ void RMI_I_Draw(){ // This is on the main thread
 
         if (elapsed < framePaceNS) {
             SDL_DelayPrecise(framePaceNS - elapsed);
-            SDL_Log("[DRAW] slept %lu ns\n",framePaceNS - elapsed);
         }
         else SDL_Log("[DRAW] did not sleep\n"); // this approach kinda slaps
     }
