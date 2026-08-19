@@ -7,19 +7,15 @@
 #include <SDL3/SDL_video.h>
 
 RMI_Result RMI_Init(Uint16 x, Uint16 y, void(*event)(SDL_Event* event), void(*update), void(*draw)){
-    volatile RMI_Globals* globals = RMI_GetGlobals();
-
-    RMI_R_SetupGlobals(globals);
-
     SDL_SetAppMetadata("Example HUMAN READABLE NAME", "1.0", "com.example.CATEGORY-NAME");
     if(!SDL_Init(SDL_INIT_VIDEO)) return RMI_RESULT_FAILURE;
 
-    globals->width = x;
-    globals->height = y;
+    g_globals.width = x;
+    g_globals.height = y;
 
-    globals->eventHandler = event;
-    globals->updateHandler = update;
-    globals->drawHandler = draw;
+    g_globals.eventHandler = event;
+    g_globals.updateHandler = update;
+    g_globals.drawHandler = draw;
 
     SDL_DisplayID dispID = SDL_GetPrimaryDisplay();
     const SDL_DisplayMode* dispMode = SDL_GetCurrentDisplayMode(dispID);
@@ -29,7 +25,7 @@ RMI_Result RMI_Init(Uint16 x, Uint16 y, void(*event)(SDL_Event* event), void(*up
         return RMI_RESULT_FAILURE;
     }
 
-    globals->framePace = 1.0f / dispMode->refresh_rate;
+    g_globals.framePace = 1.0f / dispMode->refresh_rate;
 
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
@@ -38,44 +34,27 @@ RMI_Result RMI_Init(Uint16 x, Uint16 y, void(*event)(SDL_Event* event), void(*up
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER,1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,24);
 
-    globals->window = SDL_CreateWindow("Cool Window", x, y, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+    g_globals.window = SDL_CreateWindow("Cool Window", x, y, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 
-    if(!globals->window){
+    if(!g_globals.window){
         return RMI_RESULT_FAILURE;
     }
 
     SDL_GLContext context;
-    context = SDL_GL_CreateContext(globals->window);
-    SDL_GL_MakeCurrent(globals->window, context);
+    context = SDL_GL_CreateContext(g_globals.window);
+    SDL_GL_MakeCurrent(g_globals.window, context);
     gladLoadGL((SDL_GL_GetProcAddress));
-
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-    glEnable(GL_CULL_FACE); // Face normals are currently ass
-
-    glCullFace(GL_BACK);
-
-    glEnable(GL_DEPTH_TEST);
-
-    // first frame
-
-    glViewport(0,0,x,y);
-    glClearColor(0.1f,0.1f,0.1f,1.0f);
-    glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-
-    SDL_GL_SwapWindow(globals->window);
 
     return RMI_RESULT_SUCCESS;
 }
 
 void RMI_Deinit(){
-    volatile RMI_Globals* glabas = RMI_GetGlobals();
-    glabas->running = false;
+    g_globals.running = false;
 
-    if (glabas->window) {
+    if (g_globals.window) {
         SDL_GLContext context = SDL_GL_GetCurrentContext();
         SDL_GL_DestroyContext(context);
-        SDL_DestroyWindow(glabas->window);
+        SDL_DestroyWindow(g_globals.window);
     }
 
     SDL_Quit();

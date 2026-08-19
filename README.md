@@ -1,13 +1,10 @@
+# WIP
 # RMI (Roll Me In)
 
-my engine making framework
-
-its actually more like a weird sdl wrapper
-
-still wip fuck off
+my weird multithreaded [SDL](https://github.com/libsdl-org/SDL) wrapper + some other things library.
 
 ## Building requirements
-* GCC & CMake
+* GNU make, GCC and CMake
 * SDL3 (newest version preferably)
 * Python3
 
