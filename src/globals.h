@@ -16,10 +16,6 @@ typedef struct {
     void (*drawHandler)();
 }RMI_Globals;
 
-volatile RMI_Globals* RMI_GetGlobals();
-
-void RMI_R_SetupGlobals(volatile RMI_Globals* ptr);
-void RMI_W_SetupGlobals(volatile RMI_Globals* ptr);
-
+extern volatile RMI_Globals g_globals; // this is funky and i dont like it
 
 #endif

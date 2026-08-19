@@ -1,8 +1,7 @@
+# WIP
 # RMI (Roll Me In)
 
-my weird multithreaded sdl wrapper
-
-still wip fuck off
+my weird multithreaded [SDL](https://github.com/libsdl-org/SDL) wrapper + some other things library.
 
 ## Building requirements
 * GCC & CMake
